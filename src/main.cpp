@@ -1,12 +1,14 @@
 #include "Window.h"
+#include "ConfigReader.h"
 
 int main()
 {
     setlocale(LC_ALL, "");
 
+    ConfigReader config;
     // Вам нужно будет считать данные значения из конфига
-    const int wWidth = 1280;
-    const int wHeight = 720;
+	const int wWidth = config.getWindowWidth();
+    const int wHeight = config.getWindowHeight();
 
     Window window(wWidth, wHeight);
     window.Run();

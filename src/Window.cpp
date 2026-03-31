@@ -1,7 +1,10 @@
 #include "Window.h"
+#include <iostream>
 
-Window::Window(const unsigned int wWidth, const unsigned int wHeight) 
+Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader config) 
 {
+    _config = std::make_shared<ConfigReader>(config);
+
     _window.create(sf::VideoMode({wWidth, wHeight}), "Demo");
 
     auto desktop = sf::VideoMode::getDesktopMode();
@@ -9,7 +12,8 @@ Window::Window(const unsigned int wWidth, const unsigned int wHeight)
 
     _window.setFramerateLimit(60);
 
-    ImGui::SFML::Init(_window);
+    if (!ImGui::SFML::Init(_window))
+        std::cerr << "Init error";
 
     ImGui::GetStyle().ScaleAllSizes(1.0f);
     ImGui::GetIO().FontGlobalScale = 2.0f;
@@ -20,12 +24,18 @@ Window::Window(const unsigned int wWidth, const unsigned int wHeight)
 void Window::Initialize()
 {
     // Все эти дефолтные данные надо будет прочитать из конфигурационного файла
-    _rect = std::make_shared<Rectangle>(sf::Vector2f{120.f, 50.f});
-    _rect->SetPosition({100.0f, 10.0f});
+    _rect = std::make_shared<Rectangle>(sf::Vector2f{_config->getLogoWidth(), _config->getLogoHeight() });
+    _rect->SetPosition({ _config->getLogoPositionX(), _config->getLogoPositionY() });
+    //_rect->
 
-    _text = std::make_shared<Text>("../fonts/futura.ttf", L"Текст", 24);
-    _text->SetPosition({0, _window.getSize().y - (float) _text->GetCharacterSize()});
+    _text = std::make_shared<Text>(_config->getFontPath(), L"Пауза", 24);
+    _text->SetPosition({0, _window.getSize().y - static_cast<float>(_text->GetCharacterSize())});
 }
+
+void Window::setConfig(ConfigReader config)
+{
+    _config = std::make_shared<ConfigReader>(config);
+};
 
 void Window::Run()
 {
@@ -58,7 +68,7 @@ void Window::UpdateUserInput()
         {
             std::wcout << L"Key pressed with code = " << sf::Keyboard::getDescription(keyPressed->scancode).toWideString() << "\n";
 
-            if (keyPressed->code == sf::Keyboard::Key::B)
+            if (keyPressed->code == sf::Keyboard::Key::Space)
             {
                 _rect->ReverseMove();
             }

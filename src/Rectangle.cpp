@@ -32,6 +32,7 @@ void Rectangle::Update()
 {
     _rectangle.setFillColor(sf::Color(_color[0]*255, _color[1]*255, _color[2]*255));
     _rectangle.setPosition({_rectangle.getPosition().x + _xSpeed, _rectangle.getPosition().y + _ySpeed});
+    
 }
 
 void Rectangle::SetPosition(const sf::Vector2f position)
