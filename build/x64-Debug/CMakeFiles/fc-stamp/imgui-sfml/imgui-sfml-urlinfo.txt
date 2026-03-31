@@ -1,0 +1,12 @@
+# This is a generated file and its contents are an internal implementation detail.
+# The download step will be re-executed if anything in this file changes.
+# No other meaning or use of this file is supported.
+
+method=url
+command=C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;D:/dev/game_engine_study/build/x64-Debug/CMakeFiles/fc-stamp/imgui-sfml/download-imgui-sfml.cmake;COMMAND;C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;D:/dev/game_engine_study/build/x64-Debug/CMakeFiles/fc-stamp/imgui-sfml/verify-imgui-sfml.cmake;COMMAND;C:/Program Files/Microsoft Visual Studio/18/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;D:/dev/game_engine_study/build/x64-Debug/CMakeFiles/fc-stamp/imgui-sfml/extract-imgui-sfml.cmake
+source_dir=D:/dev/game_engine_study/build/x64-Debug/_deps/imgui-sfml-src
+work_dir=D:/dev/game_engine_study/build/x64-Debug/_deps
+url(s)=https://github.com/SFML/imgui-sfml/archive/v3.0.zip
+hash=
+      no_extract=
+

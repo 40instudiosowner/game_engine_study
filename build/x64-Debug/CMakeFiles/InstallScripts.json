@@ -1,0 +1,17 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/dev/game_engine_study/build/x64-Debug/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/dependencies/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/sfml-build/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/sfml-build/src/SFML/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/sfml-build/src/SFML/System/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/sfml-build/src/SFML/Main/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/sfml-build/src/SFML/Window/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/sfml-build/src/SFML/Graphics/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/freetype-build/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/_deps/imgui-sfml-build/cmake_install.cmake",
+		"D:/dev/game_engine_study/build/x64-Debug/src/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

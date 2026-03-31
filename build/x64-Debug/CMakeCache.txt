@@ -271,6 +271,12 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Enable to build 7-Zip source packages
+CPACK_SOURCE_7Z:BOOL=ON
+
+//Enable to build ZIP source packages
+CPACK_SOURCE_ZIP:BOOL=ON
+
 //Directory under which to collect all populated content
 FETCHCONTENT_BASE_DIR:PATH=D:/dev/game_engine_study/build/x64-Debug/_deps
 
@@ -286,6 +292,14 @@ FETCHCONTENT_QUIET:BOOL=ON
 FETCHCONTENT_SOURCE_DIR_FREETYPE:PATH=
 
 //When not empty, overrides where to find pre-populated content
+// for imgui
+FETCHCONTENT_SOURCE_DIR_IMGUI:PATH=
+
+//When not empty, overrides where to find pre-populated content
+// for imgui-sfml
+FETCHCONTENT_SOURCE_DIR_IMGUI-SFML:PATH=
+
+//When not empty, overrides where to find pre-populated content
 // for sfml
 FETCHCONTENT_SOURCE_DIR_SFML:PATH=
 
@@ -295,17 +309,56 @@ FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
 //Enables UPDATE_DISCONNECTED behavior just for population of Freetype
 FETCHCONTENT_UPDATES_DISCONNECTED_FREETYPE:BOOL=OFF
 
+//Enables UPDATE_DISCONNECTED behavior just for population of imgui
+FETCHCONTENT_UPDATES_DISCONNECTED_IMGUI:BOOL=OFF
+
+//Enables UPDATE_DISCONNECTED behavior just for population of imgui-sfml
+FETCHCONTENT_UPDATES_DISCONNECTED_IMGUI-SFML:BOOL=OFF
+
 //Enables UPDATE_DISCONNECTED behavior just for population of sfml
 FETCHCONTENT_UPDATES_DISCONNECTED_SFML:BOOL=OFF
 
 //Git command line client
 GIT_EXECUTABLE:FILEPATH=C:/Program Files/Git/cmd/git.exe
 
+//Path to a file.
+IMGUI_INCLUDE_DIR:PATH=D:/dev/game_engine_study/build/x64-Debug/_deps/imgui-src
+
+//Path to a directory containing user ImGui config
+IMGUI_SFML_CONFIG_DIR:PATH=D:/dev/game_engine_study/build/x64-Debug/_deps/imgui-sfml-src
+
+//Path where user's config header will be installed
+IMGUI_SFML_CONFIG_INSTALL_DIR:PATH=
+
+//Name of a custom user ImGui config header
+IMGUI_SFML_CONFIG_NAME:STRING=imconfig-SFML.h
+
+//Disable obsolete ImGui functions
+IMGUI_SFML_DISABLE_OBSOLETE_FUNCTIONS:BOOL=OFF
+
+//Enable compiler warnings
+IMGUI_SFML_ENABLE_WARNINGS:BOOL=OFF
+
+//Use find_package to find SFML
+IMGUI_SFML_FIND_SFML:BOOL=OFF
+
+//Build imgui_demo.cpp
+IMGUI_SFML_IMGUI_DEMO:BOOL=OFF
+
+//Use default imconfig-SFML.h
+IMGUI_SFML_USE_DEFAULT_CONFIG:BOOL=ON
+
 //OpenGL library for win32
 OPENGL_gl_LIBRARY:STRING=opengl32
 
 //GLU library for win32
 OPENGL_glu_LIBRARY:STRING=glu32
+
+//Arguments to supply to pkg-config
+PKG_CONFIG_ARGN:STRING=
+
+//pkg-config executable
+PKG_CONFIG_EXECUTABLE:FILEPATH=PKG_CONFIG_EXECUTABLE-NOTFOUND
 
 //Value Computed by CMake
 SFML_BINARY_DIR:STATIC=D:/dev/game_engine_study/build/x64-Debug/_deps/sfml-build
@@ -323,6 +376,13 @@ SFML_BUILD_NETWORK:BOOL=OFF
 // the graphics module is built.
 SFML_BUILD_WINDOW:BOOL=ON
 
+//ON to configure extras, OFF to ignore them
+SFML_CONFIGURE_EXTRAS:BOOL=OFF
+
+//ON to enable precompiled headers for SFML builds -- only supported
+// on Windows/Linux and for static library builds
+SFML_ENABLE_PCH:BOOL=OFF
+
 //Enable sanitizers
 SFML_ENABLE_SANITIZERS:BOOL=OFF
 
@@ -331,6 +391,10 @@ SFML_ENABLE_STDLIB_ASSERTIONS:BOOL=OFF
 
 //True to generate PDB debug symbols, OFF otherwise.
 SFML_GENERATE_PDB:BOOL=ON
+
+//ON to automatically install pkg-config files so other projects
+// can find SFML
+SFML_INSTALL_PKGCONFIG_FILES:BOOL=OFF
 
 //Value Computed by CMake
 SFML_IS_TOP_LEVEL:STATIC=OFF
@@ -364,6 +428,24 @@ Slider_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 Slider_SOURCE_DIR:STATIC=D:/dev/game_engine_study
+
+//Value Computed by CMake
+freetype_BINARY_DIR:STATIC=D:/dev/game_engine_study/build/x64-Debug/_deps/freetype-build
+
+//Value Computed by CMake
+freetype_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+freetype_SOURCE_DIR:STATIC=D:/dev/game_engine_study/build/x64-Debug/_deps/freetype-src
+
+//Value Computed by CMake
+imgui_sfml_BINARY_DIR:STATIC=D:/dev/game_engine_study/build/x64-Debug/_deps/imgui-sfml-build
+
+//Value Computed by CMake
+imgui_sfml_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+imgui_sfml_SOURCE_DIR:STATIC=D:/dev/game_engine_study/build/x64-Debug/_deps/imgui-sfml-src
 
 
 ########################
@@ -498,7 +580,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MT
 CMAKE_MT-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //noop for ranlib
@@ -544,8 +626,12 @@ CMAKE_STATIC_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_7Z
+CPACK_SOURCE_7Z-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_ZIP
+CPACK_SOURCE_ZIP-ADVANCED:INTERNAL=1
 //Details about finding OpenGL
-FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[opengl32][found components: OpenGL ][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[opengl32][ ][v()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //ADVANCED property for variable: GIT_EXECUTABLE
@@ -554,6 +640,10 @@ GIT_EXECUTABLE-ADVANCED:INTERNAL=1
 OPENGL_gl_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_glu_LIBRARY
 OPENGL_glu_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PKG_CONFIG_ARGN
+PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
+PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //CMAKE_INSTALL_PREFIX during last run
 _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=D:/dev/game_engine_study/install/x64-Debug
 
