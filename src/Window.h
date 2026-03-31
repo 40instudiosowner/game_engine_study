@@ -10,6 +10,7 @@
 
 #include "Rectangle.h"
 #include "Text.h"
+#include "ConfigReader.h"
 
 class Window {
     sf::RenderWindow _window;
@@ -21,6 +22,8 @@ class Window {
     std::shared_ptr<Rectangle> _rect;
     std::shared_ptr<Text> _text;
 
+    std::shared_ptr<ConfigReader> _config;
+
     void Initialize();
 
     void UpdateUserInput();
@@ -28,8 +31,11 @@ class Window {
     void UpdateGui();
     void Render();
 
+    void setConfig(ConfigReader config);
+
 public:
-    Window(const unsigned int wWidth, const unsigned int wHeight);
+
+    Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader config);
     
     void Run();
 };
