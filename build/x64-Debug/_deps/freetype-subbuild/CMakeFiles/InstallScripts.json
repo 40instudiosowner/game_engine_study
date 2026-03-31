@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"D:/dev/game_engine_study/build/x64-Debug/_deps/freetype-subbuild/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

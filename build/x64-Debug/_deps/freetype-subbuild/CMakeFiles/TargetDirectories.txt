@@ -1,3 +1,0 @@
-D:/dev/game_engine_study/build/x64-Debug/_deps/freetype-subbuild/CMakeFiles/freetype-populate.dir
-D:/dev/game_engine_study/build/x64-Debug/_deps/freetype-subbuild/CMakeFiles/edit_cache.dir
-D:/dev/game_engine_study/build/x64-Debug/_deps/freetype-subbuild/CMakeFiles/rebuild_cache.dir
