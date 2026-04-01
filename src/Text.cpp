@@ -23,7 +23,13 @@ Text::Text(const std::filesystem::path& fontPath, const sf::String text, const i
 
 void Text::Draw(sf::RenderTarget& target)
 {
-    target.draw(_text);
+    if (_shouldDraw)
+        target.draw(_text);
+}
+
+void Text::SetShouldDraw(bool shouldDraw)
+{
+    _shouldDraw = shouldDraw;
 }
 
 const int Text::GetCharacterSize() const

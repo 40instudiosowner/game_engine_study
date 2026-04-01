@@ -1,10 +1,12 @@
+#pragma once
+
 #include "json.hpp"
 #include <fstream>
 #include <string>
 
 using json = nlohmann::json;
 
-const std::string CONFIG_FILE_PATH = "config.json";
+const std::string CONFIG_FILE_PATH = "../config.json";
 
 struct Color 
 {
@@ -63,11 +65,11 @@ public:
         return _config["logo"]["size"]["height"];
     }
 
-    int getLogoPositionX() const {
+    float getLogoPositionX() const {
         return _config["logo"]["position"]["x"];
     }
 
-    int getLogoPositionY() const {
+    float getLogoPositionY() const {
         return _config["logo"]["position"]["y"];
     }
 

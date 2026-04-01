@@ -2,8 +2,8 @@ set(TARGET_NAME main)
 set(SOURCES main.cpp
     Window.cpp
     Rectangle.cpp
-    Text.cpp "ConfigReader.cpp")
-#set(SOURCES old_main.cpp)
+    Text.cpp 
+    ConfigReader.cpp)
 
 add_executable(${TARGET_NAME} 
     ${SOURCES})

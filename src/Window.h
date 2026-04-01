@@ -23,6 +23,7 @@ class Window {
     std::shared_ptr<Text> _text;
 
     std::shared_ptr<ConfigReader> _config;
+    std::vector<std::string> _logoPaths;
 
     void Initialize();
 

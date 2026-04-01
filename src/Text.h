@@ -10,6 +10,8 @@ class Text
 
     sf::Text _text = sf::Text(_font);
 
+    bool _shouldDraw = false;
+
     void Transfer(const Text& other);
 public:
     Text() = default;
@@ -21,6 +23,7 @@ public:
     void SetPosition(const sf::Vector2f position);
 
     void Draw(sf::RenderTarget& target);
+    void SetShouldDraw(bool shouldDraw);
 
     Text& operator =(const Text &other);
     Text& operator =(Text &&other);

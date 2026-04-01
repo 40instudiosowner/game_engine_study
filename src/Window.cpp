@@ -5,7 +5,7 @@ Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigRead
 {
     _config = std::make_shared<ConfigReader>(config);
 
-    _window.create(sf::VideoMode({wWidth, wHeight}), "Demo");
+    _window.create(sf::VideoMode({wWidth, wHeight}), "Slider");
 
     auto desktop = sf::VideoMode::getDesktopMode();
     _window.setPosition({ (int) (desktop.size.x / 2 - wWidth / 2), (int) (desktop.size.y / 2 - wHeight / 2) });
@@ -24,12 +24,18 @@ Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigRead
 void Window::Initialize()
 {
     // Все эти дефолтные данные надо будет прочитать из конфигурационного файла
-    _rect = std::make_shared<Rectangle>(sf::Vector2f{_config->getLogoWidth(), _config->getLogoHeight() });
+    _rect = std::make_shared<Rectangle>(sf::Vector2f{static_cast<float>(_config->getLogoWidth()),
+                                                     static_cast<float>(_config->getLogoHeight()) });
     _rect->SetPosition({ _config->getLogoPositionX(), _config->getLogoPositionY() });
-    //_rect->
+    _logoPaths = _config->getLogoPaths();
 
-    _text = std::make_shared<Text>(_config->getFontPath(), L"Пауза", 24);
-    _text->SetPosition({0, _window.getSize().y - static_cast<float>(_text->GetCharacterSize())});
+    if (_logoPaths.size() > 0)
+        _rect->SetTexture(_logoPaths[0]);
+    
+    std::cout << "fact path -------" <<  _config->getFontPath();
+    _text = std::make_shared<Text>(_config->getFontPath(), L"Pause", 24);
+    _text->SetPosition({ _window.getSize().x / 2.f, 
+                         _window.getSize().y / 2.f - static_cast<float>(_text->GetCharacterSize())});
 }
 
 void Window::setConfig(ConfigReader config)
@@ -70,7 +76,17 @@ void Window::UpdateUserInput()
 
             if (keyPressed->code == sf::Keyboard::Key::Space)
             {
-                _rect->ReverseMove();
+                //_rect->ReverseMove();
+                if (_rect->IsStopped())
+                {
+                    _text->SetShouldDraw(false);
+                    _rect->ContinueMovement();
+                }
+                else
+                {
+                    _text->SetShouldDraw(true);
+                    _rect->StopMovement();
+                }
             }
         }
     }
@@ -85,8 +101,8 @@ void Window::UpdateGui()
 {
     //ImGui::ShowDemoWindow();
 
-    ImGui::Begin("Window Title");
-    ImGui::Text("Press B to invert movement");
+    ImGui::Begin("Settings");
+    ImGui::Text("Press Space to pause...");
 
     ImGui::ColorEdit3("Color", _rect->GetColors());
     ImGui::SameLine();
@@ -94,6 +110,8 @@ void Window::UpdateGui()
 
     if (ImGui::Button("Reset Rectangle"))
         _rect->SetPosition({0, 0});
+
+    ImGui::InputFloat("Speed", _rect->GetSpeed());
 
     ImGui::End();
 }

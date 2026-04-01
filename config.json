@@ -4,11 +4,11 @@
     "height": 720
   },
   "paths": {
-    "font": "assets/fonts/futura.ttf",
+    "font": "../assets/fonts/futura.ttf",
     "logos": [
-      "assets/images/BluRayLogo.png",
-      "assets/images/CDLogo.png",
-      "assets/images/DVDLogo.png"
+      "../assets/images/BluRayLogo.png",
+      "../assets/images/CDLogo.png",
+      "../assets/images/DVDLogo.png"
     ]
   },
   "animation": {
@@ -26,8 +26,8 @@
       "b": 0
     },
     "position": {
-      "x": 0,
-      "y": 0
+      "x": 0.0,
+      "y": 0.0
     },
     "size": {
       "width": 120,
