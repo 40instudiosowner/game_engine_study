@@ -39,29 +39,23 @@ public:
         return _config["paths"]["logos"].get<std::vector<std::string>>();
     }
 
-    // --- Animation speeds ---
-    float getFadeSpeed() const {
-        return _config["animation"]["speed"]["fade"];
+    // --- Animation speed ---
+ 
+    float getSpeed() const {
+        return _config["animation"]["speed"];
     }
 
-    float getMoveSpeed() const {
-        return _config["animation"]["speed"]["move"];
-    }
-
-    float getScaleSpeed() const {
-        return _config["animation"]["speed"]["scale"];
-    }
 
     // --- Logo ---
     float getLogoScaleMultiplier() const {
         return _config["logo"]["scaleMultiplier"];
     }
 
-    int getLogoWidth() const {
+    unsigned int getLogoWidth() const {
         return _config["logo"]["size"]["width"];
     }
 
-    int getLogoHeight() const {
+    unsigned int getLogoHeight() const {
         return _config["logo"]["size"]["height"];
     }
 
@@ -82,4 +76,20 @@ public:
         };
     }
 
+	// --- Text ---
+    std::string getText() const {
+        return _config["text"]["content"];
+    }
+
+    float getTextPositionX() const {
+        return _config["text"]["position"]["x"];
+    }
+
+    float getTextPositionY() const {
+        return _config["text"]["position"]["y"];
+    }
+
+    unsigned int getFontSize() const {
+        return _config["text"]["fontSize"];
+    }
 };

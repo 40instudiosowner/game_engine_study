@@ -4,11 +4,15 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+#define DEFAULT_TEXT_SIZE 255
+
 class Text
 {
     sf::Font _font; 
-
     sf::Text _text = sf::Text(_font);
+
+	const size_t _contentSize = DEFAULT_TEXT_SIZE;
+	char _content[DEFAULT_TEXT_SIZE];
 
     bool _shouldDraw = false;
 
@@ -27,6 +31,12 @@ public:
 
     Text& operator =(const Text &other);
     Text& operator =(Text &&other);
+
+	void SetContent(const std::string& content);
+	char* GetContent();
+
+	void Update();
+    size_t GetContentSize();
 };
 
 #endif //TEXT_H

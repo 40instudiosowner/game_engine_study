@@ -12,7 +12,10 @@
 #include "Text.h"
 #include "ConfigReader.h"
 
-class Window {
+
+class Window 
+{
+
     sf::RenderWindow _window;
 
     sf::Clock _deltaClock;

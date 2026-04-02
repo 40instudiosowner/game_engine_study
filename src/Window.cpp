@@ -24,16 +24,24 @@ Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigRead
 void Window::Initialize()
 {
     // Все эти дефолтные данные надо будет прочитать из конфигурационного файла
+
     _rect = std::make_shared<Rectangle>(sf::Vector2f{static_cast<float>(_config->getLogoWidth()),
                                                      static_cast<float>(_config->getLogoHeight()) });
     _rect->SetPosition({ _config->getLogoPositionX(), _config->getLogoPositionY() });
-    _logoPaths = _config->getLogoPaths();
 
-    if (_logoPaths.size() > 0)
-        _rect->SetTexture(_logoPaths[0]);
-    
-    std::cout << "fact path -------" <<  _config->getFontPath();
-    _text = std::make_shared<Text>(_config->getFontPath(), L"Pause", 24);
+    _logoPaths = _config->getLogoPaths();
+	// загрузка всех текстур из доступных путей и установка их в Rectangle
+	for (auto& path : _logoPaths)
+        _rect->SetTexture(path);
+
+    _rect->SetScale(_config->getLogoScaleMultiplier());
+    _rect->SetConstrains({ static_cast<float>(_window.getSize().x), static_cast<float>(_window.getSize().y) });
+
+    //std::cout << "fact path -------" <<  _config->getFontPath();
+    _text = std::make_shared<Text>(_config->getFontPath(), 
+                                   _config->getText(), 
+                                   _config->getFontSize());
+
     _text->SetPosition({ _window.getSize().x / 2.f, 
                          _window.getSize().y / 2.f - static_cast<float>(_text->GetCharacterSize())});
 }
@@ -95,23 +103,52 @@ void Window::UpdateUserInput()
 void Window::UpdateLogic()
 {
     _rect->Update();
+	_text->Update();
 }
 
 void Window::UpdateGui()
 {
-    //ImGui::ShowDemoWindow();
 
     ImGui::Begin("Settings");
-    ImGui::Text("Press Space to pause...");
 
-    ImGui::ColorEdit3("Color", _rect->GetColors());
-    ImGui::SameLine();
-    ImGui::Checkbox("Draw Rectangle", &_rect->GetShouldDraw());
+    // Выпадающий список для выбора лого
+    if (ImGui::BeginCombo("Logo", _rect->GetLogos()[_rect->GetCurrentLogoIndex()].c_str()))
+    {
+        for (int i = 0; i < _rect->GetLogos().size(); i++)
+        {
+            bool isSelected = (_rect->GetCurrentLogoIndex() == i);
+            if (ImGui::Selectable(_rect->GetLogos()[i].c_str(), isSelected))
+                _rect->SetCurrentLogoIndex(static_cast<Logo>(i));
 
+            if (isSelected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    // Скорость
+    ImGui::SliderFloat("Speed", _rect->GetSpeed(), 0.0f, 10.0f);
+
+    // Масштаб
+    ImGui::SliderFloat("Scale", _rect->GetScale(), 0.1f, 5.0f);
+
+
+    // Кнопка сброса позиции
     if (ImGui::Button("Reset Rectangle"))
         _rect->SetPosition({0, 0});
 
-    ImGui::InputFloat("Speed", _rect->GetSpeed());
+
+    // Текст вместо "Пауза"
+    ImGui::InputText("Pause Text", _text->GetContent(), _text->GetContentSize());
+
+
+    //ImGui::ColorEdit3("Color", _rect->GetColors());
+    //ImGui::SameLine();
+    ImGui::Checkbox("Draw Rectangle", &_rect->GetShouldDraw());
+
+    ImGui::Text("Press Space to pause...");
+
+    //ImGui::InputFloat("Speed", _rect->GetSpeed());
 
     ImGui::End();
 }

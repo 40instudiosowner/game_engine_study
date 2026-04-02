@@ -19,6 +19,8 @@ Text::Text(const std::filesystem::path& fontPath, const sf::String text, const i
     }
 
     _text = sf::Text(_font, text, fontSize);
+    this->SetContent(text.toAnsiString());
+
 }
 
 void Text::Draw(sf::RenderTarget& target)
@@ -66,4 +68,31 @@ void Text::Transfer(const Text& other)
     // used by a sf::Text (i.e. never write a function that uses a local sf::Font instance 
     // for creating a text). - https://www.sfml-dev.org/documentation/3.0.0/classsf_1_1Text.html
     _text.setFont(_font);
+}
+
+void Text::SetContent(const std::string& content)
+{
+    //_content = content.c_str();
+	if (content.size() + 1 > _contentSize)
+    {
+        std::cerr << "Content size exceeds the maximum allowed size of " << _contentSize << " characters.\n";
+        return;
+    }
+	std::copy(content.c_str(), content.c_str() + content.size() + 1, _content);
+    //_text.setString(content);
+}
+
+char* Text::GetContent() 
+{
+    return _content;
+}
+
+void Text::Update()
+{
+	_text.setString(_content);
+}
+
+size_t Text::GetContentSize()
+{
+	return _contentSize;
 }

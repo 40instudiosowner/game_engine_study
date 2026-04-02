@@ -6,6 +6,17 @@ project(Slider
 file(COPY
     assets/fonts/futura.ttf
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets/fonts)
+
+file(COPY
+    assets/images/BluRayLogo.png
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets/images)
+file(COPY
+    assets/images/CDLogo.png
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets/images)
+file(COPY
+    assets/images/DVDLogo.png
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets/images)
+
 file(COPY
     config.json
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

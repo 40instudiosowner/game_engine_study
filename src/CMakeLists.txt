@@ -5,6 +5,8 @@ set(SOURCES main.cpp
     Text.cpp 
     ConfigReader.cpp)
 
+set(CMAKE_CXX_FLAGS_DEBUG "/Zi")
+
 add_executable(${TARGET_NAME} 
     ${SOURCES})
 
