@@ -12,7 +12,10 @@
 #include "Text.h"
 #include "ConfigReader.h"
 
-class Window {
+
+class Window 
+{
+
     sf::RenderWindow _window;
 
     sf::Clock _deltaClock;
@@ -23,6 +26,7 @@ class Window {
     std::shared_ptr<Text> _text;
 
     std::shared_ptr<ConfigReader> _config;
+    std::vector<std::string> _logoPaths;
 
     void Initialize();
 

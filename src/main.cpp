@@ -10,7 +10,7 @@ int main()
 	const int wWidth = config.getWindowWidth();
     const int wHeight = config.getWindowHeight();
 
-    Window window(wWidth, wHeight);
+    Window window(wWidth, wHeight, config);
     window.Run();
 
     return 0;

@@ -4,27 +4,40 @@
     "height": 720
   },
   "paths": {
-    "font": "assets/fonts/futura.ttf",
+    "font": "../assets/fonts/futura.ttf",
     "logos": [
-      "assets/images/BluRayLogo.png",
-      "assets/images/CDLogo.png",
-      "assets/images/DVDLogo.png"
+      "../assets/images/BluRayLogo.png",
+      "../assets/images/CDLogo.png",
+      "../assets/images/DVDLogo.png"
     ]
   },
   "animation": {
-    "speed": {
-      "fade": 1.0,
-      "move": 2.0,
-      "scale": 1.0
-    }
+    "speed": 2.0
   },
   "logo": {
     "scaleMultiplier": 1.0,
     "color": {
       "r": 255,
       "g": 0,
-      "b": 0,
-      "a": 255
+      "b": 0
+    },
+    "position": {
+      "x": 0.0,
+      "y": 0.0
+    },
+    "size": {
+      "width": 100,
+      "height": 50
+    }
+  },
+  "text": {
+    "content": "Pause",
+    "fontSize": 24,
+
+    "position": {
+      "x": 0.0,
+      "y": 0.0
     }
   }
 }
+
