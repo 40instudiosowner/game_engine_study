@@ -10,8 +10,8 @@ Rectangle::Rectangle(sf::Vector2f size)
 void Rectangle::SetTexture(const std::string& filepath)
 {
 	sf::Texture newTexture;
-	if (!newTexture.loadFromFile(filepath));
-        std::cerr << "Error loading texture " << filepath;
+	if (!newTexture.loadFromFile(filepath))
+        std::cerr << "Error loading texture " << filepath << std::endl;
 
 	_recTextures.push_back(newTexture);
 
