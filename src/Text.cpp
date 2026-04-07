@@ -29,11 +29,6 @@ void Text::Draw(sf::RenderTarget& target)
         target.draw(_text);
 }
 
-void Text::SetShouldDraw(bool shouldDraw)
-{
-    _shouldDraw = shouldDraw;
-}
-
 const int Text::GetCharacterSize() const
 {
     return _text.getCharacterSize();

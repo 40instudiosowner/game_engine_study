@@ -5,6 +5,11 @@ int main()
 {
     setlocale(LC_ALL, "");
 
+#ifdef DEBUG
+    sf::err().rdbuf(std::cout.rdbuf());
+    std::cout<< "Debug mode enabled\n";
+#endif
+
     ConfigReader config;
     // Вам нужно будет считать данные значения из конфига
 	const int wWidth = config.getWindowWidth();

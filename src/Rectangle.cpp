@@ -9,19 +9,16 @@ Rectangle::Rectangle(sf::Vector2f size)
 
 void Rectangle::SetTexture(const std::string& filepath)
 {
-	sf::Texture newTexture;
-	if (!newTexture.loadFromFile(filepath));
-        std::cerr << "Error loading texture " << filepath;
+    sf::Texture newTexture;
+    if (!newTexture.loadFromFile(filepath))
+    {
+        std::cerr << "Error loading texture " << filepath << std::endl;
+    }
 
-	_recTextures.push_back(newTexture);
+    _recTextures.push_back(newTexture);
 
     //_rectangle.setTexture(&_recTextures.back());
 
-}
-
-void Rectangle::SetConstrains(const sf::Vector2f constrains)
-{
-    _constrains = constrains;
 }
 
 void Rectangle::ReverseMove() 
@@ -33,11 +30,6 @@ void Rectangle::ReverseMove()
 float* Rectangle::GetColors()
 {
     return _color;
-}
-
-bool& Rectangle::GetShouldDraw()
-{
-    return _shouldDraw;
 }
 
 void Rectangle::Draw(sf::RenderTarget& target)
@@ -108,7 +100,9 @@ void Rectangle::Update()
 	    _updateTexture = false;
     }
     _rectangle.setScale({ _scale, _scale });
-
+    _rectangle.setFillColor(sf::Color(static_cast<uint8_t>(_color[0] * 255), 
+                                        static_cast<uint8_t>(_color[1] * 255), 
+                                        static_cast<uint8_t>(_color[2] * 255)));
 
 	this->InvertDirectionIfCollided();
 }
@@ -137,17 +131,6 @@ void Rectangle::SetSpeed(const float speed)
 float* Rectangle::GetSpeed()
 {
     return &_speed;
-}
-
-void Rectangle::SetScale(const float scale)
-{
-    _scale = scale;
-	//_rectangle.setScale(_scale, _scale);
-}
-
-float* Rectangle::GetScale()
-{
-	return &_scale;
 }
 
 void Rectangle::StopMovement()

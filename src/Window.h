@@ -20,12 +20,12 @@ class Window
 
     sf::Clock _deltaClock;
 
-    bool _isRun;
+    bool _isRun = true;
 
     std::shared_ptr<Rectangle> _rect;
     std::shared_ptr<Text> _text;
 
-    std::shared_ptr<ConfigReader> _config;
+    std::unique_ptr<ConfigReader> _config;
     std::vector<std::string> _logoPaths;
 
     void Initialize();
@@ -35,11 +35,11 @@ class Window
     void UpdateGui();
     void Render();
 
-    void setConfig(ConfigReader config);
+    void setConfig(ConfigReader& config);
 
 public:
 
-    Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader config);
+    Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader& config);
     
     void Run();
 };

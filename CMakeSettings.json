@@ -21,6 +21,28 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": ""
+    },
+    {
+      "name": "g++-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "MinGW_x64_x64" ],
+      "buildRoot": "${projectDir}\\build\\g++-Debug",
+      "installRoot": "${projectDir}\\install\\g++-Debug",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": ""
+    },
+    {
+      "name": "g++-Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "inheritEnvironments": [ "MinGW_x64_x64" ],
+      "buildRoot": "${projectDir}\\build\\g++-Release",
+      "installRoot": "${projectDir}\\install\\g++-Release",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": ""
     }
   ]
 }

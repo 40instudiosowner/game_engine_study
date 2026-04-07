@@ -1,9 +1,8 @@
 #include "Window.h"
 #include <iostream>
 
-Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader config) 
+Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader& config) 
 {
-    _config = std::make_shared<ConfigReader>(config);
 
     _window.create(sf::VideoMode({wWidth, wHeight}), "Slider");
 
@@ -18,7 +17,7 @@ Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigRead
     ImGui::GetStyle().ScaleAllSizes(1.0f);
     ImGui::GetIO().FontGlobalScale = 2.0f;
 
-    Initialize();
+    setConfig(config);
 }
 
 void Window::Initialize()
@@ -46,9 +45,10 @@ void Window::Initialize()
                          _window.getSize().y / 2.f - static_cast<float>(_text->GetCharacterSize())});
 }
 
-void Window::setConfig(ConfigReader config)
+void Window::setConfig(ConfigReader& config)
 {
-    _config = std::make_shared<ConfigReader>(config);
+    _config = std::make_unique<ConfigReader>(config);
+    Initialize();
 };
 
 void Window::Run()
@@ -76,11 +76,14 @@ void Window::UpdateUserInput()
 
         if (event->is<sf::Event::Closed>())
         {
+            std::cout<< "Window closed\n";
             _isRun = false;
         }
         else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) 
         {
+            #ifdef DEBUG
             std::wcout << L"Key pressed with code = " << sf::Keyboard::getDescription(keyPressed->scancode).toWideString() << "\n";
+            #endif
 
             if (keyPressed->code == sf::Keyboard::Key::Space)
             {
@@ -130,7 +133,11 @@ void Window::UpdateGui()
     ImGui::SliderFloat("Speed", _rect->GetSpeed(), 0.0f, 10.0f);
 
     // Масштаб
-    ImGui::SliderFloat("Scale", _rect->GetScale(), 0.1f, 5.0f);
+    ImGui::SliderFloat("Scale", _rect->GetScaleRef(), 0.1f, 5.0f);
+
+    ImGui::SliderFloat("R", &_rect->GetColorRef()[0], 0.1f, 1.0f);
+    ImGui::SliderFloat("G", &_rect->GetColorRef()[1], 0.1f, 1.0f);
+    ImGui::SliderFloat("B", &_rect->GetColorRef()[2], 0.1f, 1.0f);
 
 
     // Кнопка сброса позиции
@@ -144,7 +151,7 @@ void Window::UpdateGui()
 
     //ImGui::ColorEdit3("Color", _rect->GetColors());
     //ImGui::SameLine();
-    ImGui::Checkbox("Draw Rectangle", &_rect->GetShouldDraw());
+    ImGui::Checkbox("Draw Rectangle", _rect->GetShouldDrawRef());
 
     ImGui::Text("Press Space to pause...");
 
