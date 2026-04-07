@@ -60,8 +60,9 @@ public:
     void SaveCurrentSpeed();
     
     void SetSpeed(const float speed);
-    float* GetSpeed();
-    
+    float GetSpeed();
+    float* GetSpeedRef() { return &_speed; };
+
     bool IsStopped();
     void SetTexture(const std::string& filepath);
     

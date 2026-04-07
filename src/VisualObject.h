@@ -5,10 +5,13 @@
 #include <string>
 #include <vector>
 
+/**
+    @brief АБК для объектов отображения
+*/
 class VisualObject
 {
 protected:
-    bool _shouldDraw = true;
+    bool _shouldDraw = false;
     sf::Vector2f _position{ 0.0f, 0.0f };
     sf::Vector2f _constrains{ 1920.0f, 1080.0f };
     

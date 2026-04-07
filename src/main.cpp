@@ -11,7 +11,7 @@ int main()
 #endif
 
     ConfigReader config;
-    // Вам нужно будет считать данные значения из конфига
+
 	const int wWidth = config.getWindowWidth();
     const int wHeight = config.getWindowHeight();
 
