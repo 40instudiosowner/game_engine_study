@@ -18,15 +18,20 @@ Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigRead
     ImGui::GetIO().FontGlobalScale = 2.0f;
 
     setConfig(config);
+    Initialize();
 }
 
-void Window::Initialize()
+int Window::Initialize()
 {
-    // Все эти дефолтные данные надо будет прочитать из конфигурационного файла
-
+    if (!_config)
+    {
+        std::cerr << "INIT ERROR! Config is not set!";
+        return 1;
+    }
     _rect = std::make_shared<Rectangle>(sf::Vector2f{static_cast<float>(_config->getLogoWidth()),
                                                      static_cast<float>(_config->getLogoHeight()) });
     _rect->SetPosition({ _config->getLogoPositionX(), _config->getLogoPositionY() });
+    _rect->SetShouldDraw(true);
 
     _logoPaths = _config->getLogoPaths();
 	// загрузка всех текстур из доступных путей и установка их в Rectangle
@@ -36,25 +41,31 @@ void Window::Initialize()
     _rect->SetScale(_config->getLogoScaleMultiplier());
     _rect->SetConstrains({ static_cast<float>(_window.getSize().x), static_cast<float>(_window.getSize().y) });
 
-    //std::cout << "fact path -------" <<  _config->getFontPath();
     _text = std::make_shared<Text>(_config->getFontPath(), 
                                    _config->getText(), 
                                    _config->getFontSize());
 
     _text->SetPosition({ _window.getSize().x / 2.f, 
                          _window.getSize().y / 2.f - static_cast<float>(_text->GetCharacterSize())});
+
+    _visualObjects.push_back(std::make_unique<Rectangle>(sf::Vector2f{ static_cast<float>(_config->getLogoWidth()),
+                                                                       static_cast<float>(_config->getLogoHeight()) }));
+
+    _initialized = true;
+    return 0;
 }
 
 void Window::setConfig(ConfigReader& config)
 {
     _config = std::make_unique<ConfigReader>(config);
-    Initialize();
 };
 
 void Window::Run()
 {
     while (_isRun) 
     {
+
+        // UI->Update(_window, vector<unique_ptr<VisualObject>>)
         sf::Time delta = _deltaClock.restart();
         ImGui::SFML::Update(_window, delta);
 
@@ -65,6 +76,7 @@ void Window::Run()
     }
 
     _window.close();
+    // UI->Shutdown
     ImGui::SFML::Shutdown();
 }
 
@@ -87,7 +99,6 @@ void Window::UpdateUserInput()
 
             if (keyPressed->code == sf::Keyboard::Key::Space)
             {
-                //_rect->ReverseMove();
                 if (_rect->IsStopped())
                 {
                     _text->SetShouldDraw(false);
@@ -130,7 +141,7 @@ void Window::UpdateGui()
     }
 
     // Скорость
-    ImGui::SliderFloat("Speed", _rect->GetSpeed(), 0.0f, 10.0f);
+    ImGui::SliderFloat("Speed", _rect->GetSpeedRef(), 0.0f, 10.0f);
 
     // Масштаб
     ImGui::SliderFloat("Scale", _rect->GetScaleRef(), 0.1f, 5.0f);
@@ -148,14 +159,11 @@ void Window::UpdateGui()
     // Текст вместо "Пауза"
     ImGui::InputText("Pause Text", _text->GetContent(), _text->GetContentSize());
 
-
-    //ImGui::ColorEdit3("Color", _rect->GetColors());
     //ImGui::SameLine();
     ImGui::Checkbox("Draw Rectangle", _rect->GetShouldDrawRef());
 
     ImGui::Text("Press Space to pause...");
 
-    //ImGui::InputFloat("Speed", _rect->GetSpeed());
 
     ImGui::End();
 }

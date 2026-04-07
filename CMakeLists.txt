@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(Slider
-    VERSION 1.0
+    VERSION 1.1
     LANGUAGES CXX)
 
 file(COPY

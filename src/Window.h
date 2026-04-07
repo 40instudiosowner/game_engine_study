@@ -15,20 +15,22 @@
 
 class Window 
 {
-
     sf::RenderWindow _window;
 
     sf::Clock _deltaClock;
 
     bool _isRun = true;
+    bool _initialized = false;
 
     std::shared_ptr<Rectangle> _rect;
     std::shared_ptr<Text> _text;
 
+    std::vector<std::unique_ptr<VisualObject>> _visualObjects;    // список объектов отрисовки
+
     std::unique_ptr<ConfigReader> _config;
     std::vector<std::string> _logoPaths;
 
-    void Initialize();
+    int Initialize();
 
     void UpdateUserInput();
     void UpdateLogic();

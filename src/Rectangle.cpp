@@ -128,9 +128,9 @@ void Rectangle::SetSpeed(const float speed)
     _speed = speed;
 }
 
-float* Rectangle::GetSpeed()
+float Rectangle::GetSpeed()
 {
-    return &_speed;
+    return _speed;
 }
 
 void Rectangle::StopMovement()
