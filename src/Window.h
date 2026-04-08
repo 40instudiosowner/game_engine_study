@@ -11,31 +11,22 @@
 #include "Rectangle.h"
 #include "Text.h"
 #include "ConfigReader.h"
-
+#include "UI.h"
 
 class Window 
 {
     sf::RenderWindow _window;
 
-    sf::Clock _deltaClock;
-
     bool _isRun = true;
     bool _initialized = false;
-
-    std::shared_ptr<Rectangle> _rect;
-    std::shared_ptr<Text> _text;
-
+ 
+    std::unique_ptr<UI> _ui;
     std::vector<std::unique_ptr<VisualObject>> _visualObjects;    // список объектов отрисовки
 
     std::unique_ptr<ConfigReader> _config;
     std::vector<std::string> _logoPaths;
 
     int Initialize();
-
-    void UpdateUserInput();
-    void UpdateLogic();
-    void UpdateGui();
-    void Render();
 
     void setConfig(ConfigReader& config);
 
