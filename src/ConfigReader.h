@@ -10,7 +10,7 @@ const std::string CONFIG_FILE_PATH = "../config.json";
 
 struct Color 
 {
-    int r, g, b;
+    float r, g, b;
 };
 
 
