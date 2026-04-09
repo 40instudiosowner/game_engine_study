@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "ConfigReader.h"
 #include <iostream>
 
 Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader& config) 
@@ -28,8 +29,11 @@ int Window::Initialize()
     _visualObjects.push_back(std::make_unique<Rectangle>(sf::Vector2f{ static_cast<float>(_config->getLogoWidth()),
                                                                        static_cast<float>(_config->getLogoHeight()) }));
 
-    _visualObjects.front()->SetPosition({_config->getLogoPositionX(), _config->getLogoPositionY()});
-    _visualObjects.front()->SetShouldDraw(true);
+    _visualObjects.front()->SetPosition({_config->getLogoPositionX(), _config->getLogoPositionY()});    // позиция из конфига
+    Color logoColor = _config->getLogoColor();
+    _visualObjects.front()->SetColor(logoColor.r, logoColor.g, logoColor.b);  // цсет из конфига 
+
+    _visualObjects.front()->SetShouldDraw(true);    // при первом запуске рисовать
 
     _logoPaths = _config->getLogoPaths();
     // загрузка всех текстур из доступных путей и установка их в Rectangle

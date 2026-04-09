@@ -14,7 +14,7 @@ protected:
     bool _shouldDraw = false;
     sf::Vector2f _position{ 0.0f, 0.0f };
     sf::Vector2f _constrains{ 1920.0f, 1080.0f };
-    
+    float _color[3] = { 1.0f, 0.0f, 0.0f };
 public:
     VisualObject() = default;
     virtual ~VisualObject() = default;
@@ -30,6 +30,12 @@ public:
     
     virtual sf::Vector2f GetConstrains() const { return _constrains; }
     virtual void SetConstrains(const sf::Vector2f constrains) { _constrains = constrains; }
+    virtual void SetColor(const float r, const float g, const float b) 
+    {
+        _color[0] = r; 
+        _color[1] = g; 
+        _color[2] = b; 
+    }
     
     virtual void Move(const sf::Vector2f offset) {
         _position += offset;

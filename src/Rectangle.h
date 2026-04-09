@@ -18,7 +18,6 @@ private:
     bool _stopped = false;
     bool _updateTexture = true;
     
-    float _color[3] = { 1.0f, 0.0f, 0.0f };
     float _xSpeed = 1.0f;
     float _ySpeed = 0.5f;
     float _speed = 1.0f;
