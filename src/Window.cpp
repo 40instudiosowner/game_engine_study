@@ -1,71 +1,229 @@
 #include "Window.h"
+
+#include "Systems/BoundsSystem.h"
+#include "Systems/MovementSystem.h"
+#include "Systems/RenderSystem.h"
+#include "Systems/UISystem.h"
+#include "Systems/AsteroidSpawnSystem.h"
+#include "Systems/InputSystem.h"
+#include "Systems/ShooterSystem.h"
+#include "Systems/CollisionSystem.h"
+#include "Systems/CollisionResolveSystem.h"
+#include "Systems/GameOverSystem.h"
+#include "Systems/DestroyOutsideScreenSystem.h"
+
+#include "Components/TransformComponent.h"
+#include "Components/VelocityComponent.h"
+#include "Components/SpriteComponent.h"
+#include "Components/BoundsComponent.h"
+#include "Components/CollisionComponent.h"
+#include "Components/MovementComponent.h"
+#include "Components/CircleShapeComponent.h"
+#include "Components/ShooterComponent.h"
+#include "Components/CircleColliderComponent.h"
+#include "Components/PlayerComponent.h"
+
 #include <iostream>
+#include <imgui-SFML.h>
 
-Window::Window(const unsigned int wWidth, const unsigned int wHeight, ConfigReader& config) 
+Window::Window(
+	unsigned int width,
+	unsigned int height,
+	ConfigReader& config)
 {
-    _window.create(sf::VideoMode({wWidth, wHeight}), "Slider");
+	_gameState.isGameOver = false;
+	_gameState.score = 0;
 
-    auto desktop = sf::VideoMode::getDesktopMode();
-    _window.setPosition({ (int) (desktop.size.x / 2 - wWidth / 2), (int) (desktop.size.y / 2 - wHeight / 2) });
+	_window.create(
+		sf::VideoMode({ width, height }),
+		"Space Invaders ECS");
 
-    _window.setFramerateLimit(60);
+	auto desktop =
+		sf::VideoMode::getDesktopMode();
 
-    _ui = std::make_unique<UI>(_window);
+	_window.setPosition(
+		{
+			static_cast<int>(
+				desktop.size.x / 2 - width / 2),
 
-    setConfig(config);
-    Initialize();
+			static_cast<int>(
+				desktop.size.y / 2 - height / 2)
+		});
+
+	_window.setFramerateLimit(60);
+
+	_config = std::make_unique<ConfigReader>(config);
+
+	// ECS SYSTEMS
+
+	_systems.AddSystem<MovementSystem>();
+
+	_systems.AddSystem<BoundsSystem>();
+
+	_systems.AddSystem<RenderSystem>(_window);
+
+	_systems.AddSystem<InputSystem>();
+
+	_systems.AddSystem<ShooterSystem>();
+
+	_systems.AddSystem<AsteroidSpawnSystem>(_window.getSize(), _gameState);
+
+	_systems.AddSystem<CollisionSystem>();
+
+	_systems.AddSystem<CollisionResolveSystem>(_gameState);
+
+	_systems.AddSystem<GameOverSystem>(_gameState);
+
+	_systems.AddSystem<DestroyOutsideScreenSystem>(_window.getSize());
+
+	// UI SYSTEM
+	_uiSystem = std::make_unique<UISystem>(_window, _gameState);
+
+	// ENTITIES
+
+	Initialize();
 }
 
-int Window::Initialize()
+Window::~Window() {};
+
+void Window::RestartGame()
 {
-    if (!_config)
-    {
-        std::cerr << "INIT ERROR! Config is not set!";
-        return 1;
-    }
- 
-    // ЛОГО 
-    _visualObjects.push_back(std::make_unique<Rectangle>(sf::Vector2f{ static_cast<float>(_config->getLogoWidth()),
-                                                                       static_cast<float>(_config->getLogoHeight()) }));
+	_world = World();
 
-    _visualObjects.front()->SetPosition({_config->getLogoPositionX(), _config->getLogoPositionY()});
-    _visualObjects.front()->SetShouldDraw(true);
+	_systems = SystemManager();
 
-    _logoPaths = _config->getLogoPaths();
-    // загрузка всех текстур из доступных путей и установка их в Rectangle
-    auto* tempRec = dynamic_cast<Rectangle*>(_visualObjects.front().get());
-    for (auto& path : _logoPaths)
-    {
-        tempRec->SetTexture(path);
-    }
+	_gameState = {};
 
-    _visualObjects.front()->SetScale(_config->getLogoScaleMultiplier());
-    _visualObjects.front()->SetConstrains({ static_cast<float>(_window.getSize().x), static_cast<float>(_window.getSize().y) });
+	CreatePlayerEntity();
 
-
-    // ТЕКСТ 
-    _visualObjects.push_back(std::make_unique<Text>(_config->getFontPath(), _config->getText(), _config->getFontSize()));
-    auto* tempText = dynamic_cast<Text*>(_visualObjects.back().get());
-    _visualObjects.back()->SetPosition({_window.getSize().x / 2.f,
-                                        _window.getSize().y / 2.f - static_cast<float>(tempText->GetCharacterSize()) });
-
-    _initialized = true;
-    return 0;
+	//RegisterSystems();
 }
 
-void Window::setConfig(ConfigReader& config)
+void Window::Initialize()
 {
-    _config = std::make_unique<ConfigReader>(config);
-};
+	if (!_config)
+	{
+		std::cerr
+			<< "Config is null\n";
+
+		return;
+	}
+
+	CreatePlayerEntity();
+}
+
+void Window::CreatePlayerEntity()
+{
+	EntityId player =
+		_world.CreateEntity();
+
+	//
+	// Transform
+	//
+
+	TransformComponent transform;
+
+	transform.position =
+	{
+		_window.getSize().x / 2.f,
+		_window.getSize().y - 120.f
+	};
+
+	//
+	// Movement
+	MovementComponent movement;
+
+	movement.speed = 500.f;
+
+	// Shape
+	CircleShapeComponent shape;
+
+	shape.shape.setRadius(40.f);
+
+	shape.shape.setPointCount(3);
+
+	shape.shape.setRotation(
+		sf::degrees(90.f));
+
+	shape.shape.setFillColor(
+		sf::Color::Green);
+
+	// Collider
+	CircleColliderComponent collider;
+
+	collider.radius = 40.f;
+
+	// Shooter
+	ShooterComponent shooter;
+
+	shooter.cooldown = 0.25f;
+
+	// Player
+	PlayerComponent playerComponent;
+
+	// Collision
+	CollisionComponent collision;
+
+	// Add components
+	_world.AddComponent(
+		player,
+		transform);
+
+	_world.AddComponent(
+		player,
+		movement);
+
+	_world.AddComponent(
+		player,
+		shape);
+
+	_world.AddComponent(
+		player,
+		collider);
+
+	_world.AddComponent(
+		player,
+		shooter);
+
+	_world.AddComponent(
+		player,
+		collision);
+
+	_world.AddComponent(
+		player,
+		playerComponent);
+}
+
 
 void Window::Run()
 {
-    while (_isRun) 
-    {
-        _ui->Update(_window, _visualObjects, _isRun);
-    }
+	sf::Clock deltaClock;
 
-    _window.close();
+	while (_isRun)
+	{
+		float dt =
+			deltaClock
+			.restart()
+			.asSeconds();
 
-    _ui->Shutdown();
+		// Clear frame
+		_window.clear();
+
+		// UI
+		_uiSystem->Update(_world,_isRun);
+
+		// ECS Systems
+		_systems.Update(_world, dt);
+
+		// ImGui render
+
+		ImGui::SFML::Render(_window);
+
+		// Present frame
+		_window.display();
+	}
+
+	_uiSystem->Shutdown();
+
+	_window.close();
 }

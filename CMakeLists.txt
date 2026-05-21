@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(Slider
+project(SpaceInvaders
     VERSION 1.2
     LANGUAGES CXX)
 
