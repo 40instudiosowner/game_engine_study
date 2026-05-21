@@ -9,8 +9,7 @@ class GameOverSystem final :
 {
 public:
 
-	explicit GameOverSystem(
-		GameState& gameState);
+	explicit GameOverSystem(GameState& gameState);
 
 	void Update(World& world, float dt) override;
 

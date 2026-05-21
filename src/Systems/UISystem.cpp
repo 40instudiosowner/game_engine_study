@@ -5,14 +5,19 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/VelocityComponent.h"
 #include "../Components/SpriteComponent.h"
+#include "../Components/PlayerComponent.h"
+#include "../Components/AsteroidComponent.h"
+#include "../Components/BulletComponent.h"
+#include "../Components/MovementComponent.h"
+#include "../Components/CollisionComponent.h"
 
 #include <imgui.h>
 #include <imgui-SFML.h>
 
 #include <iostream>
 
-UISystem::UISystem(sf::RenderWindow& window, GameState& gameState)
-	: _window(window), _gameState(gameState)
+UISystem::UISystem(sf::RenderWindow& window, World& world, GameState& gameState)
+	: _window(window), _world(world), _gameState(gameState)
 {
 	if (!ImGui::SFML::Init(window))
 		std::cerr << "ImGui init error\n";
@@ -40,7 +45,19 @@ void UISystem::Update(
 		"Score: %d",
 		_gameState.score);
 
+	ImGui::SliderFloat(
+		"Asteroid Spawn Interval",
+		&_gameState.asteroidSpawnInterval,
+		0.1f,
+		5.0f);
+
+	if (ImGui::Button("Spawn Asteroid"))
+	{
+		_gameState.spawnAsteroidRequest = true;
+	}
+
 	ImGui::End();
+
 
 	if (_gameState.isGameOver)
 	{
@@ -64,7 +81,7 @@ void UISystem::Update(
 			_gameState.score);
 
 		ImGui::Text(
-			"Press any key to restart");
+			"Press Enter to restart");
 
 		ImGui::End();
 	}
@@ -91,7 +108,7 @@ void UISystem::UpdateInput(
 		{
 			if (event->is<sf::Event::KeyPressed>())
 			{
-				//RestartGame();
+				_gameState.shouldRestart = true;
 			}
 
 			continue;
@@ -102,6 +119,94 @@ void UISystem::UpdateInput(
 
 void UISystem::UpdateGui(World& world)
 {
+	ImGui::Begin("Entities");
+
+	const auto& entities =
+		_world.GetEntities();
+
+	for (const auto& entity : entities)
+	{
+		ImGui::Separator();
+
+		ImGui::Text(
+			"Entity ID: %zu",
+			entity.id);
+
+		auto* transformPool =
+			_world.GetPool<
+			TransformComponent>();
+
+		if (transformPool &&
+			transformPool->Has(entity.id))
+		{
+			auto& transform =
+				transformPool->Get(entity.id);
+
+			ImGui::Text(
+				"Position: %.1f %.1f",
+				transform.position.x,
+				transform.position.y);
+		}
+
+		//
+		// Components
+		//
+
+		ImGui::Text("Components:");
+
+		if (_world.GetPool<PlayerComponent>() &&
+			_world.GetPool<PlayerComponent>()
+			->Has(entity.id))
+		{
+			ImGui::BulletText(
+				"%s",
+				typeid(PlayerComponent)
+				.name());
+		}
+
+		if (_world.GetPool<AsteroidComponent>() &&
+			_world.GetPool<AsteroidComponent>()
+			->Has(entity.id))
+		{
+			ImGui::BulletText(
+				"%s",
+				typeid(AsteroidComponent)
+				.name());
+		}
+
+		if (_world.GetPool<BulletComponent>() &&
+			_world.GetPool<BulletComponent>()
+			->Has(entity.id))
+		{
+			ImGui::BulletText(
+				"%s",
+				typeid(BulletComponent)
+				.name());
+		}
+
+		if (_world.GetPool<MovementComponent>() &&
+			_world.GetPool<MovementComponent>()
+			->Has(entity.id))
+		{
+			ImGui::BulletText(
+				"%s",
+				typeid(MovementComponent)
+				.name());
+		}
+
+		if (_world.GetPool<CollisionComponent>() &&
+			_world.GetPool<CollisionComponent>()
+			->Has(entity.id))
+		{
+			ImGui::BulletText(
+				"%s",
+				typeid(CollisionComponent)
+				.name());
+		}
+	}
+
+	ImGui::End();
+
 	auto* spritePool =
 		world.GetPool<SpriteComponent>();
 
@@ -116,8 +221,8 @@ void UISystem::UpdateGui(World& world)
 		!transformPool)
 		return;
 
-	const auto& entities =
-		spritePool->GetDenseEntities();
+	//const auto& entities =
+	//	spritePool->GetDenseEntities();
 
 	if (entities.empty())
 		return;
@@ -125,13 +230,13 @@ void UISystem::UpdateGui(World& world)
 	auto entity = entities.front();
 
 	auto& sprite =
-		spritePool->Get(entity);
+		spritePool->Get(entity.id);
 
 	auto& velocity =
-		velocityPool->Get(entity);
+		velocityPool->Get(entity.id);
 
 	auto& transform =
-		transformPool->Get(entity);
+		transformPool->Get(entity.id);
 
 	ImGui::Begin("Settings");
 

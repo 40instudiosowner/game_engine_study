@@ -7,8 +7,8 @@
 #include "../Components/BulletComponent.h"
 #include "../Components/AsteroidComponent.h"
 
-DestroyOutsideScreenSystem::DestroyOutsideScreenSystem(sf::Vector2u windowSize)
-	:_windowSize(windowSize)
+DestroyOutsideScreenSystem::DestroyOutsideScreenSystem(sf::Vector2u windowSize, GameState& gameState)
+	:_windowSize(windowSize), _gameState(gameState)
 {
 }
 
@@ -20,6 +20,9 @@ void DestroyOutsideScreenSystem::Update(
 		world.GetPool<TransformComponent>();
 
 	if (!transformPool)
+		return;
+
+	if (_gameState.isGameOver)
 		return;
 
 	//
@@ -35,7 +38,7 @@ void DestroyOutsideScreenSystem::Update(
 			bulletPool->GetDenseEntities();
 
 		for (auto entity : bullets)
-		{
+		{ 
 			auto& transform =
 				transformPool->Get(entity);
 

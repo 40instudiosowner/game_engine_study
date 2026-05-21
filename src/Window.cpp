@@ -54,13 +54,24 @@ Window::Window(
 
 	_config = std::make_unique<ConfigReader>(config);
 
-	// ECS SYSTEMS
+	RegisterSystems();
 
+	// UI SYSTEM
+	_uiSystem = std::make_unique<UISystem>(_window, _world, _gameState);
+
+	// ENTITIES
+
+	Initialize();
+}
+
+void Window::RegisterSystems()
+{
+	// ECS SYSTEMS
 	_systems.AddSystem<MovementSystem>();
 
 	_systems.AddSystem<BoundsSystem>();
 
-	_systems.AddSystem<RenderSystem>(_window);
+	_systems.AddSystem<RenderSystem>(_window, _gameState);
 
 	_systems.AddSystem<InputSystem>();
 
@@ -74,14 +85,7 @@ Window::Window(
 
 	_systems.AddSystem<GameOverSystem>(_gameState);
 
-	_systems.AddSystem<DestroyOutsideScreenSystem>(_window.getSize());
-
-	// UI SYSTEM
-	_uiSystem = std::make_unique<UISystem>(_window, _gameState);
-
-	// ENTITIES
-
-	Initialize();
+	_systems.AddSystem<DestroyOutsideScreenSystem>(_window.getSize(), _gameState);
 }
 
 Window::~Window() {};
@@ -96,7 +100,7 @@ void Window::RestartGame()
 
 	CreatePlayerEntity();
 
-	//RegisterSystems();
+	RegisterSystems();
 }
 
 void Window::Initialize()
@@ -221,6 +225,14 @@ void Window::Run()
 
 		// Present frame
 		_window.display();
+
+		// Restart
+		if (_gameState.shouldRestart)
+		{
+			RestartGame();
+
+			_gameState.shouldRestart = false;
+		}
 	}
 
 	_uiSystem->Shutdown();

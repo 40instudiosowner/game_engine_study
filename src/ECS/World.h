@@ -88,6 +88,11 @@ public:
 		}
 	}
 
+	const std::vector<EntityId>& GetEntities() const
+	{
+		return entities;
+	}
+
 private:
 
 	template<typename T>

@@ -33,6 +33,9 @@ void CollisionResolveSystem::Update(World& world, float)
 	if (!collisionPool)
 		return;
 
+	if (_gameState.isGameOver)
+		return;
+
 	//
 	// Bullet vs Asteroid
 	//

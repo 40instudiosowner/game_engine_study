@@ -3,6 +3,7 @@
 #include "../ECS/Systems/IUpdateSystem.h"
 
 #include <SFML/System/Vector2.hpp>
+#include "../Game/GameState.h"
 
 class DestroyOutsideScreenSystem final :
 	public IUpdateSystem
@@ -10,7 +11,7 @@ class DestroyOutsideScreenSystem final :
 public:
 
 	explicit DestroyOutsideScreenSystem(
-		sf::Vector2u windowSize);
+		sf::Vector2u windowSize, GameState& gameState);
 
 	void Update(
 		World& world,
@@ -19,4 +20,5 @@ public:
 private:
 
 	sf::Vector2u _windowSize;
+	GameState& _gameState;
 };

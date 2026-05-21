@@ -16,13 +16,105 @@ AsteroidSpawnSystem::AsteroidSpawnSystem(sf::Vector2u windowSize, GameState& gam
 {
 }
 
+void AsteroidSpawnSystem::SpawnAsteroid(
+	World& world)
+{
+	auto asteroid =
+		world.CreateEntity();
+
+	TransformComponent transform;
+
+	transform.position =
+	{
+		static_cast<float>(
+			rand() % _windowSize.x),
+		-100.f
+	};
+
+	world.AddComponent(
+		asteroid,
+		transform);
+
+	
+	// Random radius
+	float radius =
+		20.f +
+		static_cast<float>(
+			rand() % 40);
+
+	CircleColliderComponent collider;
+	collider.radius = radius;
+
+	world.AddComponent(
+		asteroid,
+		collider);
+
+	CircleShapeComponent shape;
+
+	shape.shape.setRadius(radius);
+
+	shape.shape.setPointCount(
+		8 + rand() % 8);
+
+	shape.shape.setFillColor(
+		sf::Color::Transparent);
+
+	shape.shape.setOutlineColor(
+		sf::Color::White);
+
+	shape.shape.setOutlineThickness(
+		2.f);
+
+	world.AddComponent(
+		asteroid,
+		shape);
+
+	MovementComponent movement;
+
+	movement.direction =
+	{
+		-0.5f +
+		static_cast<float>(
+			rand()) / RAND_MAX,
+
+		0.5f +
+		static_cast<float>(
+			rand()) / RAND_MAX
+	};
+
+	movement.speed =
+		50.f +
+		static_cast<float>(
+			rand() % 250);
+
+	world.AddComponent(
+		asteroid,
+		movement);
+
+	world.AddComponent(
+		asteroid,
+		CollisionComponent());
+
+	world.AddComponent(
+		asteroid,
+		AsteroidComponent());
+}
+
 void AsteroidSpawnSystem::Update(
 	World& world,
 	float dt)
 {
 	_timer += dt;
 
-	if (_timer < _spawnDelay)
+	if (_gameState.spawnAsteroidRequest)
+	{
+		SpawnAsteroid(world);
+
+		_gameState.spawnAsteroidRequest = false;
+	}
+
+
+	if (_timer < _gameState.asteroidSpawnInterval)
 		return;
 
 	_timer = 0.f;
@@ -48,6 +140,9 @@ void AsteroidSpawnSystem::Update(
 
 	EntityId asteroid =
 		world.CreateEntity();
+
+	if (_gameState.isGameOver)
+		return;
 
 	TransformComponent transform;
 

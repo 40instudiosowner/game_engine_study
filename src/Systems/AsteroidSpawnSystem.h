@@ -14,6 +14,8 @@ public:
 	void Update(World& world, float dt) override;
 
 private:
+	void SpawnAsteroid(World& world);
+private:
 	GameState& _gameState;
 
 	sf::Vector2u _windowSize;

@@ -14,7 +14,7 @@ class UISystem
 {
 public:
 
-	explicit UISystem(sf::RenderWindow& window, GameState& gameState);
+	explicit UISystem(sf::RenderWindow& window, World& world, GameState& gameState);
 
 	void Update(
 		World& world,
@@ -33,6 +33,7 @@ private:
 private:
 
 	sf::RenderWindow& _window;
+	World& _world;
 
 	sf::Clock _deltaClock;
 	GameState& _gameState;

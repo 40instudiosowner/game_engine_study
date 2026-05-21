@@ -9,8 +9,8 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-RenderSystem::RenderSystem(sf::RenderWindow& window)
-	: _window(window)
+RenderSystem::RenderSystem(sf::RenderWindow& window, GameState& gameState)
+	: _window(window), _gameState(gameState)
 {
 }
 
@@ -75,6 +75,9 @@ void RenderSystem::Update(World& world, float)
 
 	const auto& entities =
 		spritePool->GetDenseEntities();
+
+	//if (_gameState.isGameOver)
+	//	return;
 
 	for (auto entity : entities)
 	{

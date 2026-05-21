@@ -27,6 +27,8 @@ public:
 
 	void RestartGame();
 
+	void RegisterSystems();
+
 private:
 
 	void Initialize();
@@ -41,11 +43,11 @@ private:
 
 	std::unique_ptr<ConfigReader> _config;
 
-	World _world;
+	std::unique_ptr<UISystem> _uiSystem;
 
 	SystemManager _systems;
 
-	std::unique_ptr<UISystem> _uiSystem;
+	World _world;
 
 	GameState _gameState;
 

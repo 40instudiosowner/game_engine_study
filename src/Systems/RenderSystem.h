@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ECS/Systems/IUpdateSystem.h"
+#include "../Game/GameState.h"
 
 namespace sf
 {
@@ -11,11 +12,12 @@ class RenderSystem final : public IUpdateSystem
 {
 public:
 
-	explicit RenderSystem(sf::RenderWindow& window);
+	explicit RenderSystem(sf::RenderWindow& window, GameState& gameState);
 
 	void Update(World& world, float dt) override;
 
 private:
 
 	sf::RenderWindow& _window;
+	GameState& _gameState;
 };

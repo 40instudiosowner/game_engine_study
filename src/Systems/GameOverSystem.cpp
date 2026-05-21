@@ -2,10 +2,8 @@
 
 #include <SFML/Window/Keyboard.hpp>
 
-GameOverSystem::GameOverSystem(
-	GameState& gameState)
-	:
-	_gameState(gameState)
+GameOverSystem::GameOverSystem(GameState& gameState)
+	:_gameState(gameState)
 {
 }
 

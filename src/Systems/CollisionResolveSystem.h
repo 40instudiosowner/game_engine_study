@@ -8,8 +8,7 @@ class CollisionResolveSystem final :
 {
 public:
 
-	explicit CollisionResolveSystem(
-		GameState& gameState);
+	explicit CollisionResolveSystem(GameState& gameState);
 
 	void Update(World& world, float dt) override;
 
