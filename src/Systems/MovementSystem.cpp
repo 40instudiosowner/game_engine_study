@@ -30,8 +30,7 @@ void MovementSystem::Update(
 			continue;
 
 
-		auto& transform =
-			transformPool->Get(entity);
+		auto& transform = transformPool->Get(entity);
 
 		//if (transform.position.y < 0)
 		//{
@@ -39,12 +38,8 @@ void MovementSystem::Update(
 		//  continue;
 		//}
 
-		auto& movement =
-			movementPool->Get(entity);
+		auto& movement = movementPool->Get(entity);
 
-		transform.position +=
-			movement.direction *
-			movement.speed *
-			dt;
+		transform.position += movement.direction * movement.speed * dt;
 	}
 }

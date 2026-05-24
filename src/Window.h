@@ -52,4 +52,7 @@ private:
 	GameState _gameState;
 
 	std::vector<std::unique_ptr<sf::Texture>> _textures;
+
+	sf::Texture playerTexture;
+	
 };

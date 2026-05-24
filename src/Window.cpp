@@ -23,6 +23,7 @@
 #include "Components/CircleColliderComponent.h"
 #include "Components/PlayerComponent.h"
 
+
 #include <iostream>
 #include <imgui-SFML.h>
 
@@ -113,6 +114,11 @@ void Window::Initialize()
 		return;
 	}
 
+	if (!playerTexture.loadFromFile(_config->GetPlayerTexturePath()))
+	{
+		std::cerr << "Failed to load player texture\n";
+	}
+
 	CreatePlayerEntity();
 }
 
@@ -144,13 +150,11 @@ void Window::CreatePlayerEntity()
 
 	shape.shape.setRadius(40.f);
 
-	shape.shape.setPointCount(3);
+	shape.shape.setPointCount(20);
 
-	shape.shape.setRotation(
-		sf::degrees(90.f));
+	shape.shape.setRotation(sf::degrees(0.f));
 
-	shape.shape.setFillColor(
-		sf::Color::Green);
+	shape.shape.setFillColor(sf::Color::Transparent);
 
 	// Collider
 	CircleColliderComponent collider;
@@ -167,6 +171,15 @@ void Window::CreatePlayerEntity()
 
 	// Collision
 	CollisionComponent collision;
+
+	// Sprite 
+	SpriteComponent sprite
+	{
+		.sprite = sf::Sprite(playerTexture),
+		.color = sf::Color::Transparent,
+		.visible = true
+	};
+	// sprite.sprite.setTexture(playerTexture);
 
 	// Add components
 	_world.AddComponent(
@@ -196,6 +209,12 @@ void Window::CreatePlayerEntity()
 	_world.AddComponent(
 		player,
 		playerComponent);
+
+	_world.AddComponent(
+		player,
+		sprite);
+
+
 }
 
 

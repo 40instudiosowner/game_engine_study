@@ -37,33 +37,29 @@ void ShooterSystem::Update(
 
 	for (auto entity : entities)
 	{
-		auto& shooter =
-			shooterPool->Get(entity);
+		auto& shooter = shooterPool->Get(entity);
 
 		shooter.currentCooldown -= dt;
 
 		if (!shooter.wantsShoot)
-			continue;
+			continue; // игрок не хочет стрелять
 
 		shooter.wantsShoot = false;
 
 		if (shooter.currentCooldown > 0.f)
 			continue;
 
-		shooter.currentCooldown =
-			shooter.cooldown;
+		shooter.currentCooldown = shooter.cooldown;
 
-		auto& transform =
-			transformPool->Get(entity);
+		auto& transform = transformPool->Get(entity);
 
-		EntityId bullet =
-			world.CreateEntity();
+		EntityId bullet = world.CreateEntity(); // создали пулю
 
 		TransformComponent bulletTransform;
 
 		bulletTransform.position =
 		{
-			transform.position.x + 25.f,
+			transform.position.x + 40.f - 6.f / 2.f, // 40 - радиус игрока, 6 - ширина пули
 			transform.position.y
 		};
 

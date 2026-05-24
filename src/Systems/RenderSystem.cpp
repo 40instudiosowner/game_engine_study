@@ -44,8 +44,7 @@ void RenderSystem::Update(World& world, float)
 			shape.shape.setPosition(
 				transform.position);
 
-			_window.draw(
-				shape.shape);
+			_window.draw(shape.shape);
 		}
 	}
 
@@ -70,35 +69,27 @@ void RenderSystem::Update(World& world, float)
 		}
 	}
 
-	if (!transformPool || !spritePool)
-		return;
-
-	const auto& entities =
-		spritePool->GetDenseEntities();
-
-	//if (_gameState.isGameOver)
-	//	return;
-
-	for (auto entity : entities)
+	if (spritePool)
 	{
-		if (!transformPool->Has(entity))
-			continue;
+		const auto& entities =
+			spritePool->GetDenseEntities();
 
-		auto& transform =
-			transformPool->Get(entity);
+		for (auto entity : entities)
+		{
+			auto& transform =
+				transformPool->Get(entity);
 
-		auto& sprite =
-			spritePool->Get(entity);
+			auto& sprite =
+				spritePool->Get(entity);
 
-		if (!sprite.visible)
-			continue;
+			sprite.sprite.setPosition(
+				transform.position);
 
-		sprite.shape.setPosition(transform.position);
-		sprite.shape.setRotation(sf::degrees(transform.rotation));
-		sprite.shape.setScale(transform.scale);
-
-		sprite.shape.setFillColor(sprite.color);
-
-		_window.draw(sprite.shape);
+			if (sprite.visible)
+			{
+				_window.draw(sprite.sprite);
+			}
+		}
 	}
+	
 }

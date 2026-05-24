@@ -3,8 +3,7 @@
 #include "../ECS/Systems/IUpdateSystem.h"
 #include "../Game/GameState.h"
 
-class CollisionResolveSystem final :
-	public IUpdateSystem
+class CollisionResolveSystem final : public IUpdateSystem
 {
 public:
 

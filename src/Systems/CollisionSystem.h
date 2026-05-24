@@ -2,8 +2,7 @@
 
 #include "../ECS/Systems/IUpdateSystem.h"
 
-class CollisionSystem final :
-	public IUpdateSystem
+class CollisionSystem final : public IUpdateSystem
 {
 public:
 

@@ -39,6 +39,10 @@ public:
         return _config["paths"]["logos"].get<std::vector<std::string>>();
     }
 
+    const std::string GetPlayerTexturePath() const {
+        return _config["paths"]["playerTexture"].get<std::string>();
+	}
+
     // --- Animation speed ---
  
     float getSpeed() const {
@@ -76,18 +80,6 @@ public:
         };
     }
 
-	// --- Text ---
-    std::string getText() const {
-        return _config["text"]["content"];
-    }
-
-    float getTextPositionX() const {
-        return _config["text"]["position"]["x"];
-    }
-
-    float getTextPositionY() const {
-        return _config["text"]["position"]["y"];
-    }
 
     unsigned int getFontSize() const {
         return _config["text"]["fontSize"];

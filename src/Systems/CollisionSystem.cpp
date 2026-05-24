@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 static float DistanceSquared(
 	const sf::Vector2f& a,
@@ -51,8 +52,7 @@ void CollisionSystem::Update(
 	auto* boxPool =
 		world.GetPool<BoxColliderComponent>();
 
-	if (!collisionPool ||
-		!transformPool)
+	if (!collisionPool || !transformPool)
 	{
 		return;
 	}
@@ -66,10 +66,7 @@ void CollisionSystem::Update(
 
 	for (auto entity : collisionEntities)
 	{
-		collisionPool
-			->Get(entity)
-			.collidedEntities
-			.clear();
+		collisionPool->Get(entity).collidedEntities.clear();
 	}
 
 	//
@@ -78,16 +75,11 @@ void CollisionSystem::Update(
 
 	if (circlePool)
 	{
-		const auto& circles =
-			circlePool->GetDenseEntities();
+		const auto& circles = circlePool->GetDenseEntities();
 
-		for (size_t i = 0;
-			i < circles.size();
-			++i)
+		for (size_t i = 0; i < circles.size(); ++i)
 		{
-			for (size_t j = i + 1;
-				j < circles.size();
-				++j)
+			for (size_t j = i + 1; j < circles.size(); ++j)
 			{
 				size_t a = circles[i];
 				size_t b = circles[j];
@@ -116,26 +108,15 @@ void CollisionSystem::Update(
 					tb.position.y + cb.radius
 				};
 
-				float radius =
-					ca.radius +
-					cb.radius;
+				float radius = ca.radius + cb.radius;
 
-				if (
-					DistanceSquared(
-						centerA,
-						centerB)
-					<=
-					radius * radius)
+				if (DistanceSquared(centerA, centerB) <= radius * radius)
 				{
-					collisionPool
-						->Get(a)
-						.collidedEntities
-						.push_back(b);
+					if (collisionPool->Has(a))
+						collisionPool->Get(a).collidedEntities.push_back(b);
 
-					collisionPool
-						->Get(b)
-						.collidedEntities
-						.push_back(a);
+					if (collisionPool->Has(b))
+						collisionPool->Get(b).collidedEntities.push_back(a);
 				}
 			}
 		}
@@ -180,15 +161,9 @@ void CollisionSystem::Update(
 						tb.position,
 						bb.size))
 				{
-					collisionPool
-						->Get(a)
-						.collidedEntities
-						.push_back(b);
+					collisionPool->Get(a).collidedEntities.push_back(b);
 
-					collisionPool
-						->Get(b)
-						.collidedEntities
-						.push_back(a);
+					collisionPool->Get(b).collidedEntities.push_back(a);
 				}
 			}
 		}
@@ -249,30 +224,14 @@ void CollisionSystem::Update(
 						bt.position.y +
 						box.size.y);
 
-				float dx =
-					circleCenter.x -
-					closestX;
+				float dx = circleCenter.x - closestX;
+				float dy = circleCenter.y - closestY;
 
-				float dy =
-					circleCenter.y -
-					closestY;
-
-				if (
-					dx * dx +
-					dy * dy
-					<=
-					circle.radius *
-					circle.radius)
+				if (dx * dx + dy * dy <= circle.radius * circle.radius)
 				{
-					collisionPool
-						->Get(boxEntity)
-						.collidedEntities
-						.push_back(circleEntity);
+					collisionPool->Get(boxEntity).collidedEntities.push_back(circleEntity);
 
-					collisionPool
-						->Get(circleEntity)
-						.collidedEntities
-						.push_back(boxEntity);
+					collisionPool->Get(circleEntity).collidedEntities.push_back(boxEntity);
 				}
 			}
 		}

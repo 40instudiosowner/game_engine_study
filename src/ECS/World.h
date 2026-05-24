@@ -27,6 +27,17 @@ public:
 	{
 		for (auto& [id, pool] : componentPools)
 			pool->Remove(entity.id);
+
+		entities.erase(
+			std::remove_if(
+				entities.begin(),
+				entities.end(),
+				[&](const EntityId& e)
+				{
+					return e.id == entity.id;
+				}),
+			entities.end());
+
 	}
 
 	template<typename T>

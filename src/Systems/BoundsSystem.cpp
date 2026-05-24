@@ -64,8 +64,7 @@ void BoundsSystem::Update(
 		auto position =
 			transform.position;
 
-		auto size =
-			sprite.shape.getGlobalBounds().size;
+		auto size = sprite.sprite.getGlobalBounds().size;
 
 		//
 		// LEFT
@@ -77,9 +76,7 @@ void BoundsSystem::Update(
 
 			if (bounds.bounce)
 			{
-				velocity.velocity.x =
-					std::abs(
-						velocity.velocity.x);
+				velocity.velocity.x = std::abs(velocity.velocity.x);
 			}
 		}
 
@@ -91,14 +88,11 @@ void BoundsSystem::Update(
 			position.x + size.x >=
 			bounds.max.x)
 		{
-			position.x =
-				bounds.max.x - size.x;
+			position.x = bounds.max.x - size.x;
 
 			if (bounds.bounce)
 			{
-				velocity.velocity.x =
-					-std::abs(
-						velocity.velocity.x);
+				velocity.velocity.x = -std::abs(velocity.velocity.x);
 			}
 		}
 

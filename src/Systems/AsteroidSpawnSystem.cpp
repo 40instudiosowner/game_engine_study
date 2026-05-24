@@ -100,11 +100,12 @@ void AsteroidSpawnSystem::SpawnAsteroid(
 		AsteroidComponent());
 }
 
-void AsteroidSpawnSystem::Update(
-	World& world,
-	float dt)
+void AsteroidSpawnSystem::Update(World& world, float dt)
 {
 	_timer += dt;
+
+	if (_gameState.isGameOver)
+		return; // проверка на завершение игры
 
 	if (_gameState.spawnAsteroidRequest)
 	{
@@ -124,10 +125,7 @@ void AsteroidSpawnSystem::Update(
 	static std::mt19937 gen(rd());
 
 	std::uniform_real_distribution<float>
-		xDist(
-			0.f,
-			static_cast<float>(
-				_windowSize.x));
+		xDist(0.f, static_cast<float>(_windowSize.x));
 
 	std::uniform_real_distribution<float>
 		radiusDist(20.f, 60.f);
@@ -135,14 +133,11 @@ void AsteroidSpawnSystem::Update(
 	std::uniform_real_distribution<float>
 		speedDist(100.f, 250.f);
 
-	float radius =
-		radiusDist(gen);
+	float radius = radiusDist(gen);
 
 	EntityId asteroid =
 		world.CreateEntity();
 
-	if (_gameState.isGameOver)
-		return;
 
 	TransformComponent transform;
 
@@ -160,8 +155,7 @@ void AsteroidSpawnSystem::Update(
 		1.f
 	};
 
-	movement.speed =
-		speedDist(gen);
+	movement.speed = speedDist(gen);
 
 	CircleShapeComponent shape;
 

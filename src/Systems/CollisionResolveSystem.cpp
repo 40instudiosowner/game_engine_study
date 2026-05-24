@@ -18,6 +18,9 @@ CollisionResolveSystem::CollisionResolveSystem(GameState& gameState)
 
 void CollisionResolveSystem::Update(World& world, float)
 {
+	if (_gameState.isGameOver)
+		return;
+
 	auto* collisionPool =
 		world.GetPool<CollisionComponent>();
 
@@ -33,8 +36,6 @@ void CollisionResolveSystem::Update(World& world, float)
 	if (!collisionPool)
 		return;
 
-	if (_gameState.isGameOver)
-		return;
 
 	//
 	// Bullet vs Asteroid
@@ -47,21 +48,16 @@ void CollisionResolveSystem::Update(World& world, float)
 
 		for (auto bullet : bullets)
 		{
-			auto& collisions =
-				collisionPool
-				->Get(bullet)
-				.collidedEntities;
+			auto& collisions = collisionPool->Get(bullet).collidedEntities;
 
 			for (auto other : collisions)
 			{
 				if (!asteroidPool->Has(other))
 					continue;
 
-				world.DestroyEntityById(
-					bullet);
+				world.DestroyEntityById(bullet);
 
-				world.DestroyEntityById(
-					other);
+				world.DestroyEntityById(other);
 
 				_gameState.score++;
 			}
@@ -74,8 +70,7 @@ void CollisionResolveSystem::Update(World& world, float)
 
 	if (playerPool && asteroidPool)
 	{
-		const auto& players =
-			playerPool->GetDenseEntities();
+		const auto& players = playerPool->GetDenseEntities();
 
 		for (auto player : players)
 		{

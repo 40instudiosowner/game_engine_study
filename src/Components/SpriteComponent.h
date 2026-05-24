@@ -2,16 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <vector>
+#include <memory>
 
 struct SpriteComponent
 {
-	sf::RectangleShape shape;
-
-	std::vector<sf::Texture> textures;
-
-	int currentTexture = 0;
+	sf::Sprite sprite;
+	sf::Color color = sf::Color::White;
 
 	bool visible = true;
 
-	sf::Color color = sf::Color::White;
 };

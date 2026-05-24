@@ -88,9 +88,7 @@ void UISystem::Update(
 
 }
 
-void UISystem::UpdateInput(
-	World&,
-	bool& isRun)
+void UISystem::UpdateInput(World&, bool& isRun)
 {
 	while (const std::optional event =
 		_window.pollEvent())
@@ -106,7 +104,7 @@ void UISystem::UpdateInput(
 
 		if (_gameState.isGameOver)
 		{
-			if (event->is<sf::Event::KeyPressed>())
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
 			{
 				_gameState.shouldRestart = true;
 			}
@@ -126,18 +124,20 @@ void UISystem::UpdateGui(World& world)
 
 	for (const auto& entity : entities)
 	{
-		ImGui::Separator();
+		auto* transformPool = _world.GetPool<TransformComponent>();
 
+		if (!transformPool || !transformPool->Has(entity.id))
+		{
+			continue; // не выводим id без компонента TransformComponent
+		}
+
+		ImGui::Separator();
 		ImGui::Text(
 			"Entity ID: %zu",
 			entity.id);
 
-		auto* transformPool =
-			_world.GetPool<
-			TransformComponent>();
 
-		if (transformPool &&
-			transformPool->Has(entity.id))
+		if (transformPool && transformPool->Has(entity.id))
 		{
 			auto& transform =
 				transformPool->Get(entity.id);
@@ -207,19 +207,18 @@ void UISystem::UpdateGui(World& world)
 
 	ImGui::End();
 
+
+
 	auto* spritePool =
 		world.GetPool<SpriteComponent>();
-
-	auto* velocityPool =
-		world.GetPool<VelocityComponent>();
 
 	auto* transformPool =
 		world.GetPool<TransformComponent>();
 
+
 	if (!spritePool ||
-		!velocityPool ||
 		!transformPool)
-		return;
+		return;		// !!!!!!!!!! 
 
 	//const auto& entities =
 	//	spritePool->GetDenseEntities();
@@ -229,44 +228,36 @@ void UISystem::UpdateGui(World& world)
 
 	auto entity = entities.front();
 
-	auto& sprite =
-		spritePool->Get(entity.id);
+	if (spritePool && spritePool->Has(entity.id) && transformPool && transformPool->Has(entity.id))
+	{
 
-	auto& velocity =
-		velocityPool->Get(entity.id);
+		auto& sprite =
+			spritePool->Get(entity.id);
 
-	auto& transform =
-		transformPool->Get(entity.id);
 
-	ImGui::Begin("Settings");
+		auto& transform =
+			transformPool->Get(entity.id);
 
-	ImGui::SliderFloat(
-		"Velocity X",
-		&velocity.velocity.x,
-		-500.f,
-		500.f);
+		ImGui::Begin("Settings");
 
-	ImGui::SliderFloat(
-		"Velocity Y",
-		&velocity.velocity.y,
-		-500.f,
-		500.f);
 
-	ImGui::SliderFloat2(
-		"Position",
-		&transform.position.x,
-		0.f,
-		1500.f);
+		ImGui::SliderFloat2(
+			"Position",
+			&transform.position.x,
+			0.f,
+			1500.f);
 
-	ImGui::ColorEdit4(
-		"Color",
-		reinterpret_cast<float*>(&sprite.color));
+		//ImGui::ColorEdit4(
+		//	"Color",
+		//	reinterpret_cast<float*>(&sprite.color));
 
-	ImGui::Checkbox(
-		"Visible",
-		&sprite.visible);
+		ImGui::Checkbox(
+			"Visible",
+			&sprite.visible);
 
-	ImGui::End();
+		ImGui::End();
+
+	}
 }
 
 void UISystem::Shutdown()

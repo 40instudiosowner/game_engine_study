@@ -66,14 +66,9 @@ void DestroyOutsideScreenSystem::Update(
 			auto& transform =
 				transformPool->Get(entity);
 
-			if (
-				transform.position.y >
-				_windowSize.y + 200.f ||
-
+			if (transform.position.y > _windowSize.y + 200.f ||
 				transform.position.x < -200.f ||
-
-				transform.position.x >
-				_windowSize.x + 200.f)
+				transform.position.x > _windowSize.x + 200.f)
 			{
 				world.DestroyEntityById(entity);
 			}
