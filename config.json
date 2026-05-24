@@ -9,7 +9,8 @@
       "../assets/images/BluRayLogo.png",
       "../assets/images/CDLogo.png",
       "../assets/images/DVDLogo.png"
-    ]
+    ],
+    "playerTexture": "../assets/images/player.png"
   },
   "animation": {
     "speed": 2.0

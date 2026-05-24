@@ -1,22 +1,28 @@
 #include "Window.h"
+
 #include "ConfigReader.h"
+
+#include <iostream>
 
 int main()
 {
-    setlocale(LC_ALL, "");
+	setlocale(LC_ALL, "");
 
 #ifdef DEBUG
-    sf::err().rdbuf(std::cout.rdbuf());
-    std::cout<< "Debug mode enabled\n";
+	sf::err().rdbuf(std::cout.rdbuf());
+
+	std::cout
+		<< "Debug mode enabled\n";
 #endif
 
-    ConfigReader config;
+	ConfigReader config;
 
-	const int wWidth = config.getWindowWidth();
-    const int wHeight = config.getWindowHeight();
+	Window window(
+		config.getWindowWidth(),
+		config.getWindowHeight(),
+		config);
 
-    Window window(wWidth, wHeight, config);
-    window.Run();
+	window.Run();
 
-    return 0;
+	return 0;
 }

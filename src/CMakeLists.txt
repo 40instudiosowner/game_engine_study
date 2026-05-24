@@ -1,10 +1,20 @@
 set(TARGET_NAME main)
 set(SOURCES main.cpp
     Window.cpp
-    Rectangle.cpp
-    Text.cpp 
     ConfigReader.cpp
-    UI.cpp)
+    # Systems
+    Systems/InputSystem.cpp
+    Systems/MovementSystem.cpp
+    Systems/BoundsSystem.cpp
+    Systems/ShooterSystem.cpp
+    Systems/AsteroidSpawnSystem.cpp
+    Systems/CollisionSystem.cpp
+    Systems/CollisionResolveSystem.cpp
+    Systems/GameOverSystem.cpp
+    Systems/RenderSystem.cpp
+    Systems/UISystem.cpp
+    Systems/DestroyOutsideScreenSystem.cpp
+    )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Building in DEBUG mode with DEBUG=1")
