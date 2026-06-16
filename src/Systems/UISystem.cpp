@@ -155,8 +155,7 @@ void UISystem::UpdateGui(World& world)
 		ImGui::Text("Components:");
 
 		if (_world.GetPool<PlayerComponent>() &&
-			_world.GetPool<PlayerComponent>()
-			->Has(entity.id))
+			_world.GetPool<PlayerComponent>()->Has(entity.id))
 		{
 			ImGui::BulletText(
 				"%s",
@@ -175,8 +174,7 @@ void UISystem::UpdateGui(World& world)
 		}
 
 		if (_world.GetPool<BulletComponent>() &&
-			_world.GetPool<BulletComponent>()
-			->Has(entity.id))
+			_world.GetPool<BulletComponent>()->Has(entity.id))
 		{
 			ImGui::BulletText(
 				"%s",
@@ -185,8 +183,7 @@ void UISystem::UpdateGui(World& world)
 		}
 
 		if (_world.GetPool<MovementComponent>() &&
-			_world.GetPool<MovementComponent>()
-			->Has(entity.id))
+			_world.GetPool<MovementComponent>()->Has(entity.id))
 		{
 			ImGui::BulletText(
 				"%s",
@@ -195,8 +192,7 @@ void UISystem::UpdateGui(World& world)
 		}
 
 		if (_world.GetPool<CollisionComponent>() &&
-			_world.GetPool<CollisionComponent>()
-			->Has(entity.id))
+			_world.GetPool<CollisionComponent>()->Has(entity.id))
 		{
 			ImGui::BulletText(
 				"%s",
