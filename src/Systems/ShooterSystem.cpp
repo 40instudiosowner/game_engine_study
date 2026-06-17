@@ -1,116 +1,86 @@
 #include "ShooterSystem.h"
-
 #include "../Components/PlayerComponent.h"
-#include "../Components/ShooterComponent.h"
 #include "../Components/TransformComponent.h"
-
-#include "../Components/BulletComponent.h"
-#include "../Components/RectangleShapeComponent.h"
+#include "../Components/VelocityComponent.h"
+#include "../Components/MovementComponent.h"
+#include "../Components/SpriteComponent.h"
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/CollisionComponent.h"
-#include "../Components/MovementComponent.h"
-
+#include "../Components/BulletComponent.h"
 #include "../ECS/World.h"
 #include "../ECS/FilterBuilder.h"
 
-void ShooterSystem::Update(
-	World& world,
-	float dt)
+ShooterSystem::ShooterSystem(GameState& gameState, AssetManager& assets)
+	: _gameState(gameState), _assets(assets)
 {
-	auto filter =		// строим фильтр с нужными компонентами
-		FilterBuilder(world)
-		.With<TransformComponent>()
-		.With<ShooterComponent>()
+}
+
+void ShooterSystem::Update(World& world, float dt)
+{
+	_cooldown -= dt;
+
+	auto filter = FilterBuilder(world)
 		.With<PlayerComponent>()
+		.With<TransformComponent>()
 		.Build();
 
+	auto* playerPool = world.GetPool<PlayerComponent>();
+	auto* transformPool = world.GetPool<TransformComponent>();
 
-	auto* playerPool =
-		world.GetPool<PlayerComponent>();
-
-	auto* shooterPool =
-		world.GetPool<ShooterComponent>();
-
-	auto* transformPool =
-		world.GetPool<TransformComponent>();
-
-	if (!playerPool ||
-		!shooterPool ||
-		!transformPool)
-	{
+	if (!playerPool || !transformPool)
 		return;
-	}
-
-	//const auto& entities =
-	//	playerPool->GetDenseEntities();
 
 	for (auto entity : filter)
 	{
-		auto& shooter = shooterPool->Get(entity);
+		auto& player = playerPool->Get(entity);
 
-		shooter.currentCooldown -= dt;
-
-		if (!shooter.wantsShoot)
-			continue; // игрок не хочет стрелять
-
-		shooter.wantsShoot = false;
-
-		if (shooter.currentCooldown > 0.f)
+		if (!player.wantsShoot)
 			continue;
 
-		shooter.currentCooldown = shooter.cooldown;
+		player.wantsShoot = false;
 
-		auto& transform = transformPool->Get(entity);
+		if (_cooldown > 0.f)
+			continue;
 
-		EntityId bullet = world.CreateEntity(); // создали пулю
+		_cooldown = 0.25f;
 
+		auto& playerTransform = transformPool->Get(entity);
+
+		auto bullet = world.CreateEntity();
+
+		// Position
 		TransformComponent bulletTransform;
-
-		bulletTransform.position =
-		{
-			transform.position.x + 40.f - 6.f / 2.f, // 40 - радиус игрока, 6 - ширина пули
-			transform.position.y
+		float offsetX = player.facingRight ? 28.f : -28.f;
+		bulletTransform.position = {
+			playerTransform.position.x + offsetX,
+			playerTransform.position.y
 		};
+		world.AddComponent(bullet, bulletTransform);
 
+		// Sprite
+		SpriteComponent bulletSprite;
+		const auto* bulletTex = _assets.GetTexture("Bullet");
+		if (bulletTex)
+		{
+			bulletSprite.texture = bulletTex;
+			auto texSize = bulletTex->getSize();
+			bulletSprite.textureRect = sf::IntRect({{0, 0}, sf::Vector2i(static_cast<int>(texSize.x), static_cast<int>(texSize.y))});
+			bulletSprite.origin = { texSize.x / 2.f, texSize.y / 2.f };
+		}
+		world.AddComponent(bullet, bulletSprite);
+
+		// Movement
 		MovementComponent movement;
+		movement.direction = { player.facingRight ? 1.f : -1.f, 0.f };
+		movement.speed = 600.f;
+		world.AddComponent(bullet, movement);
 
-		movement.direction = { 0.f, -1.f };
-
-		movement.speed = 700.f;
-
-		RectangleShapeComponent shape;
-
-		shape.shape.setSize({ 6.f, 20.f });
-
-		shape.shape.setFillColor(
-			sf::Color::Red);
-
+		// Collider
 		BoxColliderComponent collider;
+		collider.size = { 8.f, 8.f };
+		world.AddComponent(bullet, collider);
 
-		collider.size = { 6.f, 20.f };
-
-		world.AddComponent(
-			bullet,
-			bulletTransform);
-
-		world.AddComponent(
-			bullet,
-			movement);
-
-		world.AddComponent(
-			bullet,
-			shape);
-
-		world.AddComponent(
-			bullet,
-			collider);
-
-		world.AddComponent(
-			bullet,
-			CollisionComponent());
-
-		world.AddComponent(
-			bullet,
-			BulletComponent());
+		world.AddComponent(bullet, CollisionComponent{});
+		world.AddComponent(bullet, BulletComponent{});
 	}
 }

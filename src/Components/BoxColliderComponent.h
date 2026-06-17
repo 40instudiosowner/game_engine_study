@@ -6,4 +6,5 @@ struct BoxColliderComponent
 {
 	float radius = 0.f;
 	sf::Vector2f size{ 0.f, 0.f };
+	sf::Vector2f offset{ 0.f, 0.f };
 };

@@ -33,7 +33,7 @@ static bool AABBvsAABB(
 		aPos.x < bPos.x + bSize.x &&
 		aPos.x + aSize.x > bPos.x &&
 		aPos.y < bPos.y + bSize.y &&
-		aPos.y + aSize.y > bPos.y;
+		aPos.y + aSize.y >= bPos.y;
 }
 
 void CollisionSystem::Update(
@@ -156,9 +156,9 @@ void CollisionSystem::Update(
 
 				if (
 					AABBvsAABB(
-						ta.position,
+						ta.position + ba.offset,
 						ba.size,
-						tb.position,
+						tb.position + bb.offset,
 						bb.size))
 				{
 					collisionPool->Get(a).collidedEntities.push_back(b);
@@ -213,15 +213,15 @@ void CollisionSystem::Update(
 				float closestX =
 					std::clamp(
 						circleCenter.x,
-						bt.position.x,
-						bt.position.x +
+						bt.position.x + box.offset.x,
+						bt.position.x + box.offset.x +
 						box.size.x);
 
 				float closestY =
 					std::clamp(
 						circleCenter.y,
-						bt.position.y,
-						bt.position.y +
+						bt.position.y + box.offset.y,
+						bt.position.y + box.offset.y +
 						box.size.y);
 
 				float dx = circleCenter.x - closestX;

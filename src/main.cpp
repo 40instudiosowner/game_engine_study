@@ -1,6 +1,6 @@
-#include "Window.h"
-
-#include "ConfigReader.h"
+#include "GameEngine.h"
+#include "Scenes/MenuScene.h"
+#include "Scenes/GameScene.h"
 
 #include <iostream>
 
@@ -10,19 +10,19 @@ int main()
 
 #ifdef DEBUG
 	sf::err().rdbuf(std::cout.rdbuf());
-
-	std::cout
-		<< "Debug mode enabled\n";
+	std::cout << "Debug mode enabled\n";
 #endif
 
-	ConfigReader config;
+	GameEngine engine(1280, 768);
 
-	Window window(
-		config.getWindowWidth(),
-		config.getWindowHeight(),
-		config);
+	// Register scenes
+	engine.RegisterScene("menu", std::make_unique<MenuScene>());
+	engine.RegisterScene("game", std::make_unique<GameScene>());
 
-	window.Run();
+	// Start with menu
+	engine.ChangeScene("menu");
+
+	engine.Run();
 
 	return 0;
 }

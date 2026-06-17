@@ -1,24 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
-<<<<<<< HEAD
-project(Slider
-=======
-project(SpaceInvaders
->>>>>>> SpaceInvaders
-    VERSION 1.3
+project(MegaManECS
+    VERSION 3.0
     LANGUAGES CXX)
 
 file(COPY
-    assets/fonts/futura.ttf
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets/fonts)
-
-
-file(COPY
-    assets/images/player.png
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets/images)
+    assets/
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets)
 
 file(COPY
     config.json
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(dependencies)
-add_subdirectory(src) 
+add_subdirectory(src)

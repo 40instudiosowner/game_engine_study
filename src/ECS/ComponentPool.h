@@ -4,6 +4,8 @@
 
 #include <vector>
 #include <cassert>
+#include <climits>
+#include <cstdint>
 
 template<typename T>
 class ComponentPool final : public IComponentPool
