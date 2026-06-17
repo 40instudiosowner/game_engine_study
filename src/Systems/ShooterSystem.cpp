@@ -11,11 +11,20 @@
 #include "../Components/MovementComponent.h"
 
 #include "../ECS/World.h"
+#include "../ECS/FilterBuilder.h"
 
 void ShooterSystem::Update(
 	World& world,
 	float dt)
 {
+	auto filter =		// строим фильтр с нужными компонентами
+		FilterBuilder(world)
+		.With<TransformComponent>()
+		.With<ShooterComponent>()
+		.With<PlayerComponent>()
+		.Build();
+
+
 	auto* playerPool =
 		world.GetPool<PlayerComponent>();
 
@@ -32,10 +41,10 @@ void ShooterSystem::Update(
 		return;
 	}
 
-	const auto& entities =
-		playerPool->GetDenseEntities();
+	//const auto& entities =
+	//	playerPool->GetDenseEntities();
 
-	for (auto entity : entities)
+	for (auto entity : filter)
 	{
 		auto& shooter = shooterPool->Get(entity);
 

@@ -26,7 +26,7 @@ void BoundsSystem::Update(
 		world.GetPool<BoundsComponent>();
 
 	if (!transformPool ||
-		!velocityPool ||
+		//!velocityPool ||
 		!spritePool ||
 		!boundsPool)
 	{
@@ -43,7 +43,7 @@ void BoundsSystem::Update(
 	for (auto entity : entities)
 	{
 		if (!transformPool->Has(entity) ||
-			!velocityPool->Has(entity) ||
+			//!velocityPool->Has(entity) ||
 			!spritePool->Has(entity))
 		{
 			continue;
@@ -52,8 +52,8 @@ void BoundsSystem::Update(
 		auto& transform =
 			transformPool->Get(entity);
 
-		auto& velocity =
-			velocityPool->Get(entity);
+		//auto& velocity =
+		//	velocityPool->Get(entity);
 
 		auto& sprite =
 			spritePool->Get(entity);
@@ -76,7 +76,7 @@ void BoundsSystem::Update(
 
 			if (bounds.bounce)
 			{
-				velocity.velocity.x = std::abs(velocity.velocity.x);
+				//velocity.velocity.x = std::abs(velocity.velocity.x);
 			}
 		}
 
@@ -84,15 +84,13 @@ void BoundsSystem::Update(
 		// RIGHT
 		//
 
-		else if (
-			position.x + size.x >=
-			bounds.max.x)
+		else if (position.x + size.x >= bounds.max.x)
 		{
 			position.x = bounds.max.x - size.x;
 
 			if (bounds.bounce)
 			{
-				velocity.velocity.x = -std::abs(velocity.velocity.x);
+				//velocity.velocity.x = -std::abs(velocity.velocity.x);
 			}
 		}
 
@@ -106,9 +104,7 @@ void BoundsSystem::Update(
 
 			if (bounds.bounce)
 			{
-				velocity.velocity.y =
-					std::abs(
-						velocity.velocity.y);
+				//velocity.velocity.y = std::abs(velocity.velocity.y);
 			}
 		}
 
@@ -116,22 +112,17 @@ void BoundsSystem::Update(
 		// BOTTOM
 		//
 
-		else if (
-			position.y + size.y >=
-			bounds.max.y)
+		else if (position.y + size.y >= bounds.max.y)
 		{
 			position.y =
 				bounds.max.y - size.y;
 
 			if (bounds.bounce)
 			{
-				velocity.velocity.y =
-					-std::abs(
-						velocity.velocity.y);
+				//velocity.velocity.y =-std::abs(velocity.velocity.y);
 			}
 		}
 
-		transform.position =
-			position;
+		transform.position = position;
 	}
 }

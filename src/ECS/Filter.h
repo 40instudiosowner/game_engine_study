@@ -46,8 +46,7 @@ public:
 
 		void SkipInvalid()
 		{
-			while (_index <
-				_filter->_sourceEntities.size())
+			while (_index < _filter->_sourceEntities.size())
 			{
 				size_t entity =
 					_filter->_sourceEntities[_index];
@@ -69,15 +68,14 @@ public:
 public:
 
 	explicit Filter(World& world)
-		:
-		_world(world)
+		: _world(world)
 	{
 	}
 
-	void AddRequiredComponent(
-		size_t component)
+	void AddRequiredComponent(size_t component)
 	{
 		_required.push_back(component);
+		_requiredMask.set(component);
 	}
 
 	void Build()
@@ -107,8 +105,7 @@ public:
 
 		if (smallest)
 		{
-			_sourceEntities =
-				smallest->GetEntities();
+			_sourceEntities = smallest->GetEntities();
 		}
 	}
 
@@ -128,19 +125,17 @@ private:
 
 	bool Matches(size_t entity)
 	{
-		for (auto component : _required)
-		{
-			auto* pool =
-				_world.GetPoolByType(component);
+		const auto& entityData =
+			_world.GetEntity(
+				static_cast<uint32_t>(entity));
 
-			if (!pool ||
-				!pool->Has(entity))
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return
+			(
+				entityData.mask &
+				_requiredMask
+			)
+			==
+			_requiredMask;
 	}
 
 private:
@@ -148,6 +143,7 @@ private:
 	World& _world;
 
 	std::vector<size_t> _required;
+	std::bitset<MAX_COMPONENTS> _requiredMask;
 
 	std::vector<size_t> _sourceEntities;
 };

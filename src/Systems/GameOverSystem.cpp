@@ -1,5 +1,6 @@
 #include "GameOverSystem.h"
 #include "../Components/AsteroidComponent.h"
+#include "../Components/BulletComponent.h"
 #include "../ECS/World.h"
 
 #include <SFML/Window/Keyboard.hpp>
@@ -36,4 +37,17 @@ void GameOverSystem::Update(World& world, float)
 		}
 	}
 
+	// удаляем пули при завершении игры
+	auto* bulletPool = world.GetPool<BulletComponent>();
+
+	if (bulletPool)
+	{
+		auto bullets =
+			bulletPool->GetDenseEntities();
+
+		for (auto entity : bullets)
+		{
+			world.DestroyEntityById(entity);
+		}
+	}
 }

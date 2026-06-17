@@ -157,6 +157,9 @@ void Window::CreatePlayerEntity()
 
 	movement.speed = 500.f;
 
+	// Bounds
+	BoundsComponent bounds;
+
 	// Shape
 	CircleShapeComponent shape;
 
@@ -226,7 +229,9 @@ void Window::CreatePlayerEntity()
 		player,
 		sprite);
 
-
+	_world.AddComponent(
+		player,
+		bounds);
 }
 
 

@@ -8,6 +8,7 @@
 #include "../Components/CollisionComponent.h"
 
 #include "../ECS/World.h"
+#include "../ECS/FilterBuilder.h"
 
 
 CollisionResolveSystem::CollisionResolveSystem(GameState& gameState)
@@ -21,6 +22,7 @@ void CollisionResolveSystem::Update(World& world, float)
 	if (_gameState.isGameOver)
 		return;
 
+
 	auto* collisionPool =
 		world.GetPool<CollisionComponent>();
 
@@ -33,7 +35,7 @@ void CollisionResolveSystem::Update(World& world, float)
 	auto* playerPool =
 		world.GetPool<PlayerComponent>();
 
-	if (!collisionPool)
+	if (!collisionPool || !asteroidPool || !playerPool)
 		return;
 
 
@@ -41,52 +43,136 @@ void CollisionResolveSystem::Update(World& world, float)
 	// Bullet vs Asteroid
 	//
 
-	if (bulletPool && asteroidPool)
-	{
-		const auto& bullets =
-			bulletPool->GetDenseEntities();
 
-		for (auto bullet : bullets)
-		{
-			auto& collisions = collisionPool->Get(bullet).collidedEntities;
+    {
+        auto bulletFilter =
+            FilterBuilder(world)
+            .With<CollisionComponent>()
+            .With<BulletComponent>()
+            .Build();
 
-			for (auto other : collisions)
-			{
-				if (!asteroidPool->Has(other))
-					continue;
+        std::vector<uint32_t> bulletsToDestroy;
+        std::vector<uint32_t> asteroidsToDestroy;
 
-				world.DestroyEntityById(bullet);
+        for (auto bullet : bulletFilter)
+        {
+            auto& collisions =
+                collisionPool
+                ->Get(bullet)
+                .collidedEntities;
 
-				world.DestroyEntityById(other);
+            for (auto other : collisions)
+            {
+                if (!asteroidPool->Has(other))
+                {
+                    continue;
+                }
 
-				_gameState.score++;
-			}
-		}
-	}
+                bulletsToDestroy.push_back(
+                    static_cast<uint32_t>(bullet));
 
-	//
-	// Player vs Asteroid
-	//
+                asteroidsToDestroy.push_back(
+                    static_cast<uint32_t>(other));
 
-	if (playerPool && asteroidPool)
-	{
-		const auto& players = playerPool->GetDenseEntities();
+                _gameState.score++;
+            }
+        }
 
-		for (auto player : players)
-		{
-			auto& collisions = collisionPool->Get(player).collidedEntities;
+        for (auto entity : bulletsToDestroy)
+        {
+            world.DestroyEntityById(entity);
+        }
 
-			for (auto other : collisions)
-			{
-				if (!asteroidPool->Has(other))
-					continue;
+        for (auto entity : asteroidsToDestroy)
+        {
+            world.DestroyEntityById(entity);
+        }
+    }
 
-				_gameState.isGameOver = true;
+    //
+    // Player vs Asteroid
+    //
 
-				world.DestroyEntityById(player);
-				world.DestroyEntityById(other);
+    {
+        auto playerFilter =
+            FilterBuilder(world)
+            .With<CollisionComponent>()
+            .With<PlayerComponent>()
+            .Build();
 
-			}
-		}
-	}
+        for (auto player : playerFilter)
+        {
+            auto& collisions = collisionPool
+                ->Get(player)
+                .collidedEntities;
+
+            for (auto other : collisions)
+            {
+                if (!asteroidPool->Has(other))
+                {
+                    continue;
+                }
+
+                _gameState.isGameOver = true;
+
+                world.DestroyEntityById(
+                    static_cast<uint32_t>(player));
+
+                world.DestroyEntityById(
+                    static_cast<uint32_t>(other));
+
+                return;
+            }
+        }
+    }
+
+
+	//if (bulletPool && asteroidPool)
+	//{
+	//	const auto& bullets =
+	//		bulletPool->GetDenseEntities();
+
+	//	for (auto bullet : bullets)
+	//	{
+	//		auto& collisions = collisionPool->Get(bullet).collidedEntities;
+
+	//		for (auto other : collisions)
+	//		{
+	//			if (!asteroidPool->Has(other))
+	//				continue;
+
+	//			world.DestroyEntityById(bullet);
+
+	//			world.DestroyEntityById(other);
+
+	//			_gameState.score++;
+	//		}
+	//	}
+	//}
+
+	////
+	//// Player vs Asteroid
+	////
+
+	//if (playerPool && asteroidPool)
+	//{
+	//	const auto& players = playerPool->GetDenseEntities();
+
+	//	for (auto player : players)
+	//	{
+	//		auto& collisions = collisionPool->Get(player).collidedEntities;
+
+	//		for (auto other : collisions)
+	//		{
+	//			if (!asteroidPool->Has(other))
+	//				continue;
+
+	//			_gameState.isGameOver = true;
+
+	//			world.DestroyEntityById(player);
+	//			world.DestroyEntityById(other);
+
+	//		}
+	//	}
+	//}
 }
