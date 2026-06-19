@@ -18,6 +18,10 @@ public:
 	sf::Font* GetFont(const std::string& name);
 	const Animation* GetAnimation(const std::string& name) const;
 
+	const std::unordered_map<std::string, std::unique_ptr<sf::Texture>>& GetAllTextures() const { return _textures; }
+	const std::unordered_map<std::string, Animation>& GetAllAnimations() const { return _animations; }
+	const std::unordered_map<std::string, std::unique_ptr<sf::Font>>& GetAllFonts() const { return _fonts; }
+
 	// Asset name constants
 	static const std::string TEX_MEGA_IDLE;
 	static const std::string TEX_MEGA_RUN;

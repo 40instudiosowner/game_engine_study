@@ -27,6 +27,8 @@ struct Action
 	std::function<void()> callback;
 	ActionBinding binding;
 	bool isActive = false;
+	bool justPressed = false;
+	bool justReleased = false;
 };
 
 class InputManager
@@ -45,6 +47,10 @@ public:
 		std::function<void()> callback);
 
 	void Update();
+
+	bool IsActionActive(const std::string& name) const;
+	bool WasActionJustPressed(const std::string& name) const;
+	bool WasActionJustReleased(const std::string& name) const;
 
 	void Clear();
 

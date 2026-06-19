@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include <nlohmann/json.hpp>
+#include <SFML/System/Clock.hpp>
 
 using json = nlohmann::json;
 
@@ -45,4 +46,6 @@ private:
 	float _bulletRadius = 4.f;
 
 	bool _isPaused = false;
+
+	sf::Clock _imguiDeltaClock;
 };

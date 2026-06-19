@@ -2,6 +2,8 @@
 #include "Scenes/Scene.h"
 
 #include <iostream>
+#include <imgui.h>
+#include <imgui-SFML.h>
 
 GameEngine::GameEngine(unsigned int width, unsigned int height)
 {
@@ -22,11 +24,15 @@ GameEngine::GameEngine(unsigned int width, unsigned int height)
 		std::cerr << "Failed to load assets\n";
 	}
 
+	if (!ImGui::SFML::Init(_window))
+		std::cerr << "ImGui-SFML init failed\n";
+
 	std::cout << "GameEngine initialized\n";
 }
 
 GameEngine::~GameEngine()
 {
+	ImGui::SFML::Shutdown();
 	_window.close();
 }
 
@@ -35,6 +41,9 @@ void GameEngine::Run()
 	while (_isRunning)
 	{
 		float dt = _deltaClock.restart().asSeconds();
+		// Clamp dt to avoid physics explosions when window is dragged or focus changes
+		if (dt > 0.05f)
+			dt = 0.05f;
 
 		ProcessEvents();
 		Update(dt);

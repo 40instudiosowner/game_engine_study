@@ -41,17 +41,17 @@ void PlayerControlSystem::Update(World& world, float)
 		if (dir > 0.f) player.facingRight = true;
 		if (dir < 0.f) player.facingRight = false;
 
-		// Jump (only when grounded)
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) && player.isGrounded)
+		// Jump (only when grounded) - use Press action to prevent held-key repeat
+		if (_inputManager.WasActionJustPressed("Jump") && player.isGrounded)
 		{
 			player.wantsJump = true;
 		}
 
-		// Shoot
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+		// Shoot - use Press action
+		if (_inputManager.WasActionJustPressed("Shoot"))
 		{
 			player.wantsShoot = true;
-			player.shootAnimTimer = 10; // show shoot anim for ~10 frames
+			player.shootAnimTimer = 10;
 		}
 
 		// Decay shoot timer

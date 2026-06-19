@@ -32,6 +32,9 @@ void MenuScene::Init(GameEngine* engine)
 
 void MenuScene::OnActivate()
 {
+	auto& window = _engine->GetWindow();
+	window.setView(window.getDefaultView());
+
 #ifdef DEBUG
 	std::cout << "[MenuScene] Activated\n";
 #endif

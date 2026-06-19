@@ -6,6 +6,7 @@
 #include "../Components/SpriteComponent.h"
 #include "../Components/MovementComponent.h"
 #include "../Components/BoxColliderComponent.h"
+#include "../Components/CircleColliderComponent.h"
 #include "../Components/CollisionComponent.h"
 #include "../Components/PlayerComponent.h"
 #include "../Components/BulletComponent.h"
@@ -18,6 +19,8 @@
 #include "../Components/FollowXCameraComponent.h"
 #include "../Components/AnimationStateComponent.h"
 #include "../Components/AnimatorComponent.h"
+#include "../Components/BrickComponent.h"
+#include "../Components/ShooterComponent.h"
 
 #include "../Systems/RenderSystem.h"
 #include "../Systems/AnimationSystem.h"
@@ -30,10 +33,12 @@
 #include "../Systems/BrickSystem.h"
 #include "../Systems/TileCollisionSystem.h"
 #include "../Systems/ShooterSystem.h"
+#include "../Systems/DestroyOutsideScreenSystem.h"
 
 #include <fstream>
 #include <iostream>
 #include <imgui.h>
+#include <imgui-SFML.h>
 
 static constexpr int TILE_SIZE = 64;
 static constexpr int WINDOW_HEIGHT = 768;
@@ -71,6 +76,7 @@ void GameScene::Init(GameEngine* engine)
 	_systems.AddSystem<TileCollisionSystem>();
 	_systems.AddSystem<BrickSystem>(_engine->GetAssets(), _engine->GetWindow(),
 		_gameState, [this](const std::string& scene) { _engine->ChangeScene(scene); });
+	_systems.AddSystem<DestroyOutsideScreenSystem>(_engine->GetWindow().getSize(), _gameState);
 	_systems.AddSystem<PlayerAnimationSystem>();
 	_systems.AddSystem<AnimationSystem>();
 	_systems.AddSystem<CameraSystem>(_engine->GetWindow(), *_engine);
@@ -402,6 +408,7 @@ void GameScene::OnActivate()
 	_systems.AddSystem<TileCollisionSystem>();
 	_systems.AddSystem<BrickSystem>(_engine->GetAssets(), _engine->GetWindow(),
 		_gameState, [this](const std::string& scene) { _engine->ChangeScene(scene); });
+	_systems.AddSystem<DestroyOutsideScreenSystem>(_engine->GetWindow().getSize(), _gameState);
 	_systems.AddSystem<PlayerAnimationSystem>();
 	_systems.AddSystem<AnimationSystem>();
 	_systems.AddSystem<CameraSystem>(_engine->GetWindow(), *_engine);
@@ -440,16 +447,17 @@ void GameScene::Update(float dt)
 void GameScene::Render()
 {
 	auto& window = _engine->GetWindow();
+	auto& assets = _engine->GetAssets();
 	window.clear(sf::Color(0x64, 0x64, 0xFF));
 
 	_systems.Update(_world, 0.f);
 
 	auto* renderSys = _systems.GetSystem<RenderSystem>();
 	if (renderSys)
-		renderSys->Render(_world, window, _engine->GetAssets(), _renderMode);
+		renderSys->Render(_world, window, assets, _renderMode);
 
 	// HUD — draw in screen space (reset view)
-	auto* font = _engine->GetAssets().GetFont(AssetManager::FONT_MAIN);
+	auto* font = assets.GetFont(AssetManager::FONT_MAIN);
 	sf::View prevView = window.getView();
 	window.setView(window.getDefaultView());
 
@@ -474,10 +482,176 @@ void GameScene::Render()
 	}
 
 	window.setView(prevView);
+
+	// ------------------------------------------------------------
+	// ImGui UI
+	// ------------------------------------------------------------
+	ImGui::SFML::Update(window, _imguiDeltaClock.restart());
+
+	// ---- Render Mode Panel ----
+	ImGui::SetNextWindowPos(ImVec2(window.getSize().x - 220.f, 10.f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200.f, 120.f), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Render Mode");
+	if (ImGui::Button("Textures"))
+		_renderMode = 0;
+	ImGui::SameLine();
+	if (ImGui::Button("Colliders"))
+		_renderMode = 1;
+	ImGui::SameLine();
+	if (ImGui::Button("Grid"))
+		_renderMode = 2;
+
+	ImGui::Text("Current: %s",
+		_renderMode == 0 ? "Textures" :
+		_renderMode == 1 ? "Colliders" : "Grid");
+	ImGui::End();
+
+	// ---- Entities Panel ----
+	ImGui::SetNextWindowPos(ImVec2(10.f, 80.f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300.f, 400.f), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Entities");
+
+	const auto& entities = _world.GetEntities();
+	for (const auto& entity : entities)
+	{
+		auto* tPool = _world.GetPool<TransformComponent>();
+		if (!tPool || !tPool->Has(entity.id))
+			continue;
+
+		ImGui::Separator();
+		ImGui::Text("Entity %u (gen %u)", entity.id, entity.generation);
+
+		auto& t = tPool->Get(entity.id);
+		ImGui::Text("  Pos: %.1f, %.1f", t.position.x, t.position.y);
+
+		ImGui::Text("  Components:");
+#define CHECK_COMP(C) \
+	do { \
+		auto* p = _world.GetPool<C>(); \
+		if (p && p->Has(entity.id)) \
+			ImGui::BulletText("%s", #C); \
+	} while(0)
+
+		CHECK_COMP(TransformComponent);
+		CHECK_COMP(SpriteComponent);
+		CHECK_COMP(MovementComponent);
+		CHECK_COMP(VelocityComponent);
+		CHECK_COMP(GravityComponent);
+		CHECK_COMP(PlayerComponent);
+		CHECK_COMP(BulletComponent);
+		CHECK_COMP(BoxColliderComponent);
+		CHECK_COMP(CircleColliderComponent);
+		CHECK_COMP(CollisionComponent);
+		CHECK_COMP(TileComponent);
+		CHECK_COMP(BrickComponent);
+		CHECK_COMP(DecorComponent);
+		CHECK_COMP(FinishComponent);
+		CHECK_COMP(ShooterComponent);
+		CHECK_COMP(DefaultCameraComponent);
+		CHECK_COMP(FollowXCameraComponent);
+		CHECK_COMP(AnimationStateComponent);
+		CHECK_COMP(AnimatorComponent);
+#undef CHECK_COMP
+	}
+	ImGui::End();
+
+	// ---- Assets Panel ----
+	ImGui::SetNextWindowPos(ImVec2(320.f, 80.f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(400.f, 400.f), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Assets");
+
+	if (ImGui::BeginTabBar("AssetTabs"))
+	{
+		// Textures tab
+		if (ImGui::BeginTabItem("Textures"))
+		{
+			int btnIdx = 0;
+			for (const auto& [name, tex] : assets.GetAllTextures())
+			{
+				ImGui::PushID(btnIdx++);
+				ImTextureID texId = (ImTextureID)(uintptr_t)(tex->getNativeHandle());
+				float w = static_cast<float>(tex->getSize().x);
+				float h = static_cast<float>(tex->getSize().y);
+				float scale = std::min(64.f / w, 64.f / h);
+				if (ImGui::ImageButton(name.c_str(), texId,
+					ImVec2(w * scale, h * scale)))
+				{
+					// placeholder — button does nothing yet
+				}
+				if (ImGui::IsItemHovered())
+					ImGui::SetTooltip("%s\n%dx%d", name.c_str(), tex->getSize().x, tex->getSize().y);
+				ImGui::PopID();
+				if (btnIdx % 4 != 0)
+					ImGui::SameLine();
+			}
+			ImGui::EndTabItem();
+		}
+
+		// Animations tab
+		if (ImGui::BeginTabItem("Animations"))
+		{
+			int btnIdx = 0;
+			for (const auto& [name, anim] : assets.GetAllAnimations())
+			{
+				ImGui::PushID(btnIdx++);
+				if (anim.texture)
+				{
+					ImTextureID texId = (ImTextureID)(uintptr_t)(anim.texture->getNativeHandle());
+					float w = static_cast<float>(anim.frameWidth);
+					float h = static_cast<float>(anim.frameHeight);
+					float scale = std::min(64.f / w, 64.f / h);
+					if (ImGui::ImageButton(name.c_str(), texId,
+						ImVec2(w * scale, h * scale),
+						ImVec2(0, 0),
+						ImVec2(1.f / anim.frameCount, 1.f)))
+					{
+						// placeholder
+					}
+					if (ImGui::IsItemHovered())
+						ImGui::SetTooltip("%s\n%d frames, %dx%d",
+							name.c_str(), anim.frameCount, anim.frameWidth, anim.frameHeight);
+				}
+				else
+				{
+					ImGui::Text("%s (no texture)", name.c_str());
+				}
+				ImGui::PopID();
+				if (btnIdx % 4 != 0)
+					ImGui::SameLine();
+			}
+			ImGui::EndTabItem();
+		}
+
+		// Fonts tab
+		if (ImGui::BeginTabItem("Fonts"))
+		{
+			int btnIdx = 0;
+			for (const auto& [name, fontPtr] : assets.GetAllFonts())
+			{
+				ImGui::PushID(btnIdx++);
+				ImGui::Text("%s", name.c_str());
+				ImGui::PopID();
+				ImGui::SameLine();
+			}
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+	}
+	ImGui::End();
+
+	ImGui::SFML::Render(window);
 }
 
 void GameScene::HandleEvent(const sf::Event& event)
 {
+	auto& window = _engine->GetWindow();
+	ImGui::SFML::ProcessEvent(window, event);
+
+	// Skip game input if ImGui is capturing mouse/keyboard
+	if (ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard)
+		return;
+
 	if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
 	{
 		if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)

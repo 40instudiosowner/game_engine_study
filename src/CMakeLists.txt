@@ -16,9 +16,10 @@ set(SOURCES main.cpp
     Systems/MovementSystem.cpp
     Systems/CollisionSystem.cpp
     Systems/TileCollisionSystem.cpp
-    Systems/ShooterSystem.cpp
-    Systems/RenderSystem.cpp
-    )
+     Systems/ShooterSystem.cpp
+     Systems/RenderSystem.cpp
+     Systems/DestroyOutsideScreenSystem.cpp
+     )
 
 add_executable(${TARGET_NAME} 
     ${SOURCES})
@@ -27,8 +28,8 @@ add_executable(${TARGET_NAME}
 add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/assets
-    ${CMAKE_BINARY_DIR}/assets
-    COMMENT "Copying assets to build directory")
+    $<TARGET_FILE_DIR:${TARGET_NAME}>/assets
+    COMMENT "Copying assets to target directory")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Building in DEBUG mode with DEBUG=1")

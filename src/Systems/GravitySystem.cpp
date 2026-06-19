@@ -11,6 +11,7 @@ void GravitySystem::Update(World& world, float dt)
 {
 	auto filter = FilterBuilder(world)
 		.With<GravityComponent>()
+		.With<TransformComponent>()
 		.Build();
 
 	auto* gravityPool = world.GetPool<GravityComponent>();

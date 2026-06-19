@@ -81,6 +81,9 @@ void ShooterSystem::Update(World& world, float dt)
 		world.AddComponent(bullet, collider);
 
 		world.AddComponent(bullet, CollisionComponent{});
-		world.AddComponent(bullet, BulletComponent{});
+
+		BulletComponent bulletComp;
+		bulletComp.spawnPosition = bulletTransform.position;
+		world.AddComponent(bullet, bulletComp);
 	}
 }
