@@ -21,6 +21,7 @@
 #include "../Components/AnimatorComponent.h"
 #include "../Components/BrickComponent.h"
 #include "../Components/ShooterComponent.h"
+#include "../Components/EnemyComponent.h"
 
 #include "../Systems/RenderSystem.h"
 #include "../Systems/AnimationSystem.h"
@@ -34,6 +35,7 @@
 #include "../Systems/TileCollisionSystem.h"
 #include "../Systems/ShooterSystem.h"
 #include "../Systems/DestroyOutsideScreenSystem.h"
+#include "../Systems/GoombaSystem.h"
 
 #include <fstream>
 #include <iostream>
@@ -77,6 +79,7 @@ void GameScene::Init(GameEngine* engine)
 	_systems.AddSystem<BrickSystem>(_engine->GetAssets(), _engine->GetWindow(),
 		_gameState, [this](const std::string& scene) { _engine->ChangeScene(scene); });
 	_systems.AddSystem<DestroyOutsideScreenSystem>(_engine->GetWindow().getSize(), _gameState);
+	_systems.AddSystem<GoombaSystem>();
 	_systems.AddSystem<PlayerAnimationSystem>();
 	_systems.AddSystem<AnimationSystem>();
 	_systems.AddSystem<CameraSystem>(_engine->GetWindow(), *_engine);
@@ -156,6 +159,12 @@ void GameScene::LoadLevelConfig(const std::string& path)
 			CreateTile(gx, gy, name);
 		else if (name == "Finish")
 			CreateFinish(gx, gy);
+		else if (name == "Goomba")
+		{
+			float patrolLeft = obj.value("patrolLeft", gx - 2);
+			float patrolRight = obj.value("patrolRight", gx + 2);
+			CreateGoomba(gx, gy, patrolLeft, patrolRight);
+		}
 	}
 
 	std::cout << "Loaded level config\n";
@@ -380,6 +389,65 @@ void GameScene::CreateFinish(int gridX, int gridY)
 	_world.AddComponent(entity, FinishComponent{});
 }
 
+void GameScene::CreateGoomba(int gridX, int gridY, float patrolLeft, float patrolRight)
+{
+	auto& assets = _engine->GetAssets();
+	auto entity = _world.CreateEntity();
+
+	float px = static_cast<float>(gridX) * TILE_SIZE + TILE_SIZE / 2.f;
+	float py = GridYToPixel(gridY) + TILE_SIZE / 2.f;
+
+	TransformComponent transform;
+	transform.position = { px, py };
+	_world.AddComponent(entity, transform);
+
+	SpriteComponent sprite;
+	const auto* tex = assets.GetTexture("GoombaMove");
+	if (tex)
+	{
+		const auto* anim = assets.GetAnimation("GoombaMove");
+		if (anim)
+		{
+			sprite.texture = anim->texture;
+			sprite.textureRect = sf::IntRect({{0, 0}, {anim->frameWidth, anim->frameHeight}});
+			sprite.origin = { anim->frameWidth / 2.f, anim->frameHeight / 2.f };
+			sprite.scale = { 3.f, 3.f };
+		}
+	}
+	_world.AddComponent(entity, sprite);
+
+	BoxColliderComponent collider;
+	collider.size = { 30.f, 30.f };
+	_world.AddComponent(entity, collider);
+
+	_world.AddComponent(entity, CollisionComponent{});
+
+	MovementComponent movement;
+	movement.speed = 2.f;
+	_world.AddComponent(entity, movement);
+
+	EnemyComponent enemy;
+	enemy.patrolSpeed = 2.f;
+	enemy.patrolLeft = patrolLeft * TILE_SIZE;
+	enemy.patrolRight = patrolRight * TILE_SIZE + TILE_SIZE;
+	enemy.movingRight = false;
+	_world.AddComponent(entity, enemy);
+
+	AnimationStateComponent animState;
+	animState.currentAnimation = "GoombaMove";
+	animState.nextAnimation = "GoombaMove";
+	animState.isLooping = true;
+	_world.AddComponent(entity, animState);
+
+	AnimatorComponent animator;
+	const auto* goombaAnim = assets.GetAnimation("GoombaMove");
+	if (goombaAnim)
+		animator.animations["GoombaMove"] = *goombaAnim;
+	_world.AddComponent(entity, animator);
+
+	std::cout << "Created Goomba at grid (" << gridX << "," << gridY << ")\n";
+}
+
 void GameScene::OnActivate()
 {
 	SetupInputActions();
@@ -409,6 +477,7 @@ void GameScene::OnActivate()
 	_systems.AddSystem<BrickSystem>(_engine->GetAssets(), _engine->GetWindow(),
 		_gameState, [this](const std::string& scene) { _engine->ChangeScene(scene); });
 	_systems.AddSystem<DestroyOutsideScreenSystem>(_engine->GetWindow().getSize(), _gameState);
+	_systems.AddSystem<GoombaSystem>();
 	_systems.AddSystem<PlayerAnimationSystem>();
 	_systems.AddSystem<AnimationSystem>();
 	_systems.AddSystem<CameraSystem>(_engine->GetWindow(), *_engine);
@@ -442,6 +511,54 @@ void GameScene::Update(float dt)
 	}
 
 	_systems.Update(_world, dt);
+
+	// Bullet vs Enemy: destroy both on collision
+	auto* bulletPool = _world.GetPool<BulletComponent>();
+	auto* enemyPool = _world.GetPool<EnemyComponent>();
+	auto* collisionPool = _world.GetPool<CollisionComponent>();
+	if (bulletPool && enemyPool && collisionPool)
+	{
+		std::vector<size_t> toDestroy;
+		for (auto bulletEntity : bulletPool->GetDenseEntities())
+		{
+			if (!collisionPool->Has(bulletEntity))
+				continue;
+			for (size_t other : collisionPool->Get(bulletEntity).collidedEntities)
+			{
+				if (enemyPool->Has(other))
+				{
+					toDestroy.push_back(bulletEntity);
+					toDestroy.push_back(other);
+					_gameState.score += 100;
+					break;
+				}
+			}
+		}
+		for (size_t id : toDestroy)
+			_world.DestroyEntityById(id);
+	}
+
+	// Enemy vs Player: respawn player
+	if (playerPool && enemyPool && collisionPool)
+	{
+		for (auto playerEntity : playerPool->GetDenseEntities())
+		{
+			if (!collisionPool->Has(playerEntity))
+				continue;
+			for (size_t other : collisionPool->Get(playerEntity).collidedEntities)
+			{
+				if (enemyPool->Has(other))
+				{
+					auto& transform = transformPool->Get(playerEntity);
+					transform.position = {
+						1.f * TILE_SIZE + TILE_SIZE / 2.f,
+						GridYToPixel(2) + TILE_SIZE / 2.f
+					};
+					break;
+				}
+			}
+		}
+	}
 }
 
 void GameScene::Render()
@@ -661,6 +778,10 @@ void GameScene::HandleEvent(const sf::Event& event)
 		if (keyPressed->scancode == sf::Keyboard::Scancode::P)
 		{
 			_isPaused = !_isPaused;
+		}
+		if (keyPressed->scancode == sf::Keyboard::Scancode::F12)
+		{
+			_engine->ChangeScene("editor");
 		}
 	}
 }

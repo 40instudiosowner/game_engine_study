@@ -1,3 +1,5 @@
+option(ENABLE_EDITOR "Enable level editor scene" ON)
+
 set(TARGET_NAME main)
 set(SOURCES main.cpp
     GameEngine.cpp
@@ -16,10 +18,28 @@ set(SOURCES main.cpp
     Systems/MovementSystem.cpp
     Systems/CollisionSystem.cpp
     Systems/TileCollisionSystem.cpp
-     Systems/ShooterSystem.cpp
-     Systems/RenderSystem.cpp
-     Systems/DestroyOutsideScreenSystem.cpp
-     )
+    Systems/ShooterSystem.cpp
+    Systems/RenderSystem.cpp
+    Systems/DestroyOutsideScreenSystem.cpp
+    Systems/GoombaSystem.cpp
+    # Serialization
+    Serialization/ComponentSerializer.cpp
+    )
+
+if(ENABLE_EDITOR)
+    list(APPEND SOURCES
+        Editor/EditorScene.cpp
+        Editor/JsonSerializer.cpp
+        Editor/RenderService.cpp
+        Editor/CameraService.cpp
+        Editor/GameObjectFactory.cpp
+        Editor/GameObjectController.cpp
+        Editor/Systems/GuiSystem.cpp
+        Editor/Systems/InputSystem.cpp
+        Editor/Systems/MouseInputSystem.cpp
+        Editor/Systems/EntityGuiSystem.cpp
+    )
+endif()
 
 add_executable(${TARGET_NAME} 
     ${SOURCES})
@@ -38,6 +58,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
     endif()
+endif()
+
+if(ENABLE_EDITOR)
+    target_compile_definitions(${TARGET_NAME} PRIVATE EDITOR_ENABLED)
 endif()
 
 target_compile_features(${TARGET_NAME} PRIVATE cxx_std_20)

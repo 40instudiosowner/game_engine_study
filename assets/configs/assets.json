@@ -21,7 +21,9 @@
     { "name": "Finish", "path": "assets/images/finish.png" },
     { "name": "Tile1", "path": "assets/images/tile1.png" },
     { "name": "Explosion", "path": "assets/images/explosion.png" },
-    { "name": "CoinAnim", "path": "assets/images/coinAnim.png" }
+    { "name": "CoinAnim", "path": "assets/images/coinAnim.png" },
+    { "name": "GoombaAtlas", "path": "assets/images/GoombaAtlas.png" },
+    { "name": "GoombaMove", "path": "assets/images/GoombaMove.png" }
   ],
   "Animations": [
     { "name": "MegaIdle", "textureName": "MegaIdle", "frameCount": 3, "frameDuration": 15 },
@@ -31,7 +33,8 @@
     { "name": "MegaShootRun", "textureName": "MegaShootRun", "frameCount": 4, "frameDuration": 8 },
     { "name": "MegaShootJump", "textureName": "MegaShootJump", "frameCount": 1, "frameDuration": 1 },
     { "name": "Explosion", "textureName": "Explosion", "frameCount": 4, "frameDuration": 8 },
-    { "name": "CoinAnim", "textureName": "CoinAnim", "frameCount": 4, "frameDuration": 8 }
+    { "name": "CoinAnim", "textureName": "CoinAnim", "frameCount": 4, "frameDuration": 8 },
+    { "name": "GoombaMove", "textureName": "GoombaMove", "frameCount": 2, "frameDuration": 10 }
   ],
   "Fonts": [
     { "name": "MainFont", "path": "assets/fonts/futura.ttf" }

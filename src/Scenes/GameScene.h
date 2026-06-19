@@ -25,6 +25,7 @@ private:
 	void CreateTile(int gridX, int gridY, const std::string& type);
 	void CreateDecor(int gridX, int gridY, const std::string& name);
 	void CreateFinish(int gridX, int gridY);
+	void CreateGoomba(int gridX, int gridY, float patrolLeft, float patrolRight);
 	void SetupInputActions();
 
 	float _levelTime = 0.f;

@@ -41,6 +41,13 @@ public:
 			system->Update(world, dt);
 	}
 
+	void Clear()
+	{
+		systems.clear();
+		initSystems.clear();
+		updateSystems.clear();
+	}
+
 	template<typename T>
 	T* GetSystem()
 	{
