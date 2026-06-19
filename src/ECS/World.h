@@ -7,6 +7,8 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <queue>
+#include <algorithm>
 
 class World
 {
@@ -47,7 +49,18 @@ public:
 
 		pool->Add(entity.id, component);
 
-		entity.mask.set(GetComponentTypeId<T>(), true);
+		// entity.mask.set(GetComponentTypeId<T>(), true);
+
+		entities[entity.id].mask.set(GetComponentTypeId<T>());
+	}
+
+	template<typename T>
+	void RemoveComponent(EntityId entity)
+	{
+		for (auto& [id, pool] : componentPools)
+			pool->Remove(entity.id);
+
+		entities[entity.id].mask.reset(GetComponentTypeId<T>());
 	}
 
 	template<typename T>
@@ -97,12 +110,34 @@ public:
 		{
 			pool->Remove(entityId);
 		}
+
+		entities[entityId].mask.reset();
+
+		entities[entityId].generation++;
+
+		freeEntities.push(entityId);
 	}
 
 	const std::vector<EntityId>& GetEntities() const
 	{
 		return entities;
 	}
+
+	const EntityId& GetEntity(uint32_t id) const
+	{
+		return entities[id];
+	}
+
+	bool IsAlive(const EntityId& entity) const
+	{
+		if (entity.id >= entities.size())
+		{
+			return false;
+		}
+
+		return entities[entity.id].generation == entity.generation;
+	}
+
 
 private:
 
@@ -132,6 +167,7 @@ private:
 	uint32_t nextEntityId = 0;
 
 	std::vector<EntityId> entities;
+	std::queue<uint32_t> freeEntities;
 
 	std::unordered_map<size_t, std::unique_ptr<IComponentPool>> componentPools;
 };

@@ -1,0 +1,39 @@
+{
+  "Textures": [
+    { "name": "MegaIdle", "path": "assets/images/MegaIdle.png" },
+    { "name": "MegaRun", "path": "assets/images/MegaRun.png" },
+    { "name": "MegaJump", "path": "assets/images/MegaJump.png" },
+    { "name": "MegaShootIdle", "path": "assets/images/MegaShootIdle.png" },
+    { "name": "MegaShootRun", "path": "assets/images/MegaShootRun.png" },
+    { "name": "MegaShootJump", "path": "assets/images/MegaShootJump.png" },
+    { "name": "Bullet", "path": "assets/images/Bullet.png" },
+    { "name": "Tile", "path": "assets/images/tile.png" },
+    { "name": "BrickTile", "path": "assets/images/brick_tile.png" },
+    { "name": "QuestionTile", "path": "assets/images/question_tile.png" },
+    { "name": "QuestionInactiveTile", "path": "assets/images/question_inactive_tile.png" },
+    { "name": "BigHill", "path": "assets/images/hillBig.png" },
+    { "name": "SmallHill", "path": "assets/images/hillSmall.png" },
+    { "name": "Cloud", "path": "assets/images/cloud.png" },
+    { "name": "PipeL", "path": "assets/images/pipeL.png" },
+    { "name": "PipeR", "path": "assets/images/pipeR.png" },
+    { "name": "PipeUpL", "path": "assets/images/pipeUpL.png" },
+    { "name": "PipeUpR", "path": "assets/images/pipeUpR.png" },
+    { "name": "Finish", "path": "assets/images/finish.png" },
+    { "name": "Tile1", "path": "assets/images/tile1.png" },
+    { "name": "Explosion", "path": "assets/images/explosion.png" },
+    { "name": "CoinAnim", "path": "assets/images/coinAnim.png" }
+  ],
+  "Animations": [
+    { "name": "MegaIdle", "textureName": "MegaIdle", "frameCount": 3, "frameDuration": 15 },
+    { "name": "MegaRun", "textureName": "MegaRun", "frameCount": 3, "frameDuration": 8 },
+    { "name": "MegaJump", "textureName": "MegaJump", "frameCount": 1, "frameDuration": 1 },
+    { "name": "MegaShootIdle", "textureName": "MegaShootIdle", "frameCount": 1, "frameDuration": 1 },
+    { "name": "MegaShootRun", "textureName": "MegaShootRun", "frameCount": 4, "frameDuration": 8 },
+    { "name": "MegaShootJump", "textureName": "MegaShootJump", "frameCount": 1, "frameDuration": 1 },
+    { "name": "Explosion", "textureName": "Explosion", "frameCount": 4, "frameDuration": 8 },
+    { "name": "CoinAnim", "textureName": "CoinAnim", "frameCount": 4, "frameDuration": 8 }
+  ],
+  "Fonts": [
+    { "name": "MainFont", "path": "assets/fonts/futura.ttf" }
+  ]
+}

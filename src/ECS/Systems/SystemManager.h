@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <vector>
+#include <cstdint>
 
 class SystemManager
 {
@@ -38,6 +39,18 @@ public:
 	{
 		for (auto* system : updateSystems)
 			system->Update(world, dt);
+	}
+
+	template<typename T>
+	T* GetSystem()
+	{
+		for (auto& sys : systems)
+		{
+			auto* ptr = dynamic_cast<T*>(sys.get());
+			if (ptr)
+				return ptr;
+		}
+		return nullptr;
 	}
 
 private:

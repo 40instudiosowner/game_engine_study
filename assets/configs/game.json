@@ -1,0 +1,33 @@
+{
+  "window": {
+    "width": 1280,
+    "height": 768
+  },
+  "Player" : {
+    "Bbox" : [24, 32],
+    "SX": 300.0,
+    "JY": -700.0,
+    "SM": 500.0,
+    "GY": 2000.0,
+    "BasePose": "MegaIdle",
+    "Animations": [ "MegaIdle", "MegaRun", "MegaJump", "MegaShootIdle", "MegaShootRun", "MegaShootJump" ]
+  },
+  "Bullet": {
+    "BaseTexture": "Bullet",
+    "SX": 600.0,
+    "Radius": 4.0
+  },
+  "Decorations": [
+    { "Name": "BigHill", "BaseTexture": "BigHill" },
+    { "Name": "SmallHill", "BaseTexture": "SmallHill" },
+    { "Name": "Cloud", "BaseTexture": "Cloud" }
+  ],
+  "Tile": { "BaseTexture": "Tile" },
+  "Brick": { "BaseTexture": "BrickTile", "DestroyAnimation": "Explosion" },
+  "Question": {
+    "BaseTexture": "QuestionTile",
+    "InactiveTexture": "QuestionInactiveTile",
+    "CoinAnimation": "CoinAnim"
+  },
+  "Pipe": { "BaseTexture": "PipeL", "Parts": ["PipeL", "PipeR", "PipeUpL", "PipeUpR"] }
+}

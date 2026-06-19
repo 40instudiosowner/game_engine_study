@@ -1,6 +1,7 @@
 #include "DestroyOutsideScreenSystem.h"
 
 #include "../ECS/World.h"
+#include "../ECS/FilterBuilder.h"
 
 #include "../Components/TransformComponent.h"
 
@@ -26,26 +27,29 @@ void DestroyOutsideScreenSystem::Update(
 		return;
 
 	//
-	// Bullets
+	// Bullets — remove by distance from spawn point (standard Mega Man / run'n'gun)
 	//
-
 	auto* bulletPool =
 		world.GetPool<BulletComponent>();
 
 	if (bulletPool)
 	{
-		auto bullets =
-			bulletPool->GetDenseEntities();
+		auto filter = FilterBuilder(world)
+			.With<BulletComponent>()
+			.With<TransformComponent>()
+			.Build();
 
-		for (auto entity : bullets)
-		{ 
-			auto& transform =
-				transformPool->Get(entity);
+		for (auto entity : filter)
+		{
+			auto& transform = transformPool->Get(entity);
+			auto& bullet = bulletPool->Get(entity);
 
-			if (transform.position.y < -50.f)
-			{
+			float dx = transform.position.x - bullet.spawnPosition.x;
+			float dy = transform.position.y - bullet.spawnPosition.y;
+			float distSq = dx * dx + dy * dy;
+
+			if (distSq > bullet.maxDistance * bullet.maxDistance)
 				world.DestroyEntityById(entity);
-			}
 		}
 	}
 
