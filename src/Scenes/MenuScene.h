@@ -64,5 +64,6 @@ private:
 	float _bestTime = 0.f;
 
 	MenuButton _playButton;
+	MenuButton _editorButton;
 	MenuButton _exitButton;
 };

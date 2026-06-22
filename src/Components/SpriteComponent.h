@@ -5,6 +5,7 @@
 struct SpriteComponent
 {
 	const sf::Texture* texture = nullptr;
+	std::string textureName;
 	sf::IntRect textureRect;
 	sf::Color color = sf::Color::White;
 	bool visible = true;

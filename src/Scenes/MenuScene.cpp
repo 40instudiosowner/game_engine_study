@@ -25,7 +25,13 @@ void MenuScene::Init(GameEngine* engine)
 		sf::Color(100, 100, 200), sf::Color(150, 150, 255),
 		[this]() { _engine->ChangeScene("game"); });
 
-	_exitButton.Init(*font, "EXIT", 640.f, 500.f,
+#ifdef EDITOR_ENABLED
+	_editorButton.Init(*font, "EDITOR", 640.f, 480.f,
+		sf::Color(50, 150, 50), sf::Color(80, 200, 80),
+		[this]() { _engine->ChangeScene("editor"); });
+#endif
+
+	_exitButton.Init(*font, "EXIT", 640.f, 560.f,
 		sf::Color(150, 50, 50), sf::Color(200, 80, 80),
 		[this]() { _engine->Stop(); });
 }
@@ -59,6 +65,9 @@ void MenuScene::Render()
 
 	if (_titleText) window.draw(*_titleText);
 	_playButton.Draw(window);
+#ifdef EDITOR_ENABLED
+	_editorButton.Draw(window);
+#endif
 	_exitButton.Draw(window);
 	if (_bestTimeText && _bestTime > 0.f) window.draw(*_bestTimeText);
 }
@@ -74,6 +83,9 @@ void MenuScene::HandleEvent(const sf::Event& event)
 			{ mouseMoved->position.x, mouseMoved->position.y });
 
 		_playButton.UpdateHover(worldPos);
+#ifdef EDITOR_ENABLED
+		_editorButton.UpdateHover(worldPos);
+#endif
 		_exitButton.UpdateHover(worldPos);
 	}
 
@@ -88,6 +100,9 @@ void MenuScene::HandleEvent(const sf::Event& event)
 			_exitButton.UpdateHover(worldPos);
 
 			if (_playButton.isHovered) _playButton.onClick();
+#ifdef EDITOR_ENABLED
+			if (_editorButton.isHovered) _editorButton.onClick();
+#endif
 			if (_exitButton.isHovered) _exitButton.onClick();
 		}
 	}

@@ -188,6 +188,10 @@ void JsonSerializer::DeserializeWorld(const json& j, World& world)
     {
         size_t entityId = entityJson["id"];
 
+        // Ensure the entity slot exists in the new world
+        while (entityId >= world.GetEntities().size())
+            world.CreateEntity();
+
         for (const auto& compJson : entityJson["components"])
         {
             SerializedComponent comp = DeserializeComponent(compJson);

@@ -90,6 +90,11 @@ void EditorScene::StartTexturePlacement(const std::string& texName)
     _pendingType = texName;
     _entityAssetNames[id] = texName;
 
+    // Store texture name on the sprite for serialization round-trip
+    auto* spritePool = _world.GetPool<SpriteComponent>();
+    if (spritePool && spritePool->Has(static_cast<size_t>(id)))
+        spritePool->Get(static_cast<size_t>(id)).textureName = texName;
+
     // Place at camera center
     auto* transformPool = _world.GetPool<TransformComponent>();
     if (transformPool)
@@ -126,6 +131,11 @@ void EditorScene::StartAnimationPlacement(const std::string& animName)
     _pendingEntityId = id;
     _pendingType = animName;
     _entityAssetNames[id] = animName;
+
+    // Store texture name on the sprite for serialization round-trip
+    auto* spritePool = _world.GetPool<SpriteComponent>();
+    if (spritePool && spritePool->Has(static_cast<size_t>(id)))
+        spritePool->Get(static_cast<size_t>(id)).textureName = animName;
 
     // Place at camera center
     auto* transformPool = _world.GetPool<TransformComponent>();
@@ -270,7 +280,53 @@ void EditorScene::SaveScene()
 
 void EditorScene::LoadScene()
 {
+    _pendingReload = true;
+}
+
+void EditorScene::RestoreTexturePointers()
+{
+    auto& assets = _engine->GetAssets();
+    auto* spritePool = _world.GetPool<SpriteComponent>();
+
+    if (!spritePool)
+        return;
+
+    for (auto entity : spritePool->GetDenseEntities())
+    {
+        auto& sprite = spritePool->Get(entity);
+        if (sprite.texture || sprite.textureName.empty())
+            continue;
+
+        // Try texture first
+        const auto* tex = assets.GetTexture(sprite.textureName);
+        if (tex)
+        {
+            sprite.texture = tex;
+            continue;
+        }
+
+        // Try animation (use its texture)
+        const auto* anim = assets.GetAnimation(sprite.textureName);
+        if (anim && anim->texture)
+        {
+            sprite.texture = anim->texture;
+            continue;
+        }
+    }
+}
+
+void EditorScene::DoLoadScene()
+{
+    _pendingReload = false;
+
+    // Reset render states that might have been toggled during previous session
+    RenderState::SnapToGrid = false;
+    RenderState::IsTexture = true;
+    RenderState::IsGrid = false;
+    RenderState::IsCollider = false;
     _entityAssetNames.clear();
+    _pendingEntityId = -1;
+    _pendingType.clear();
     _world = World();
     _serializer = std::make_unique<ComponentSerializer>(_world);
     _jsonSerializer = std::make_unique<JsonSerializer>(*_serializer, "assets/configs/scene.json");
@@ -294,11 +350,18 @@ void EditorScene::LoadScene()
         [this]() { CancelPlacement(); });
     _systems.AddSystem<EntityGuiSystem>(_goController, *_serializer);
 
+    // Restore texture pointers from stored names
+    RestoreTexturePointers();
+
     std::cout << "Scene loaded\n";
 }
 
 void EditorScene::Update(float dt)
 {
+    // Deferred scene reload (must happen outside _systems.Update loop)
+    if (_pendingReload)
+        DoLoadScene();
+
     // If in placement mode, update pending entity position to follow mouse
     if (_pendingEntityId >= 0)
     {
@@ -375,8 +438,7 @@ void EditorScene::Render()
     }
 
     // Start ImGui frame, then run all editor systems (they use ImGui)
-    sf::Clock deltaClock;
-    ImGui::SFML::Update(window, deltaClock.restart());
+    ImGui::SFML::Update(window, _imguiDeltaClock.restart());
 
     _systems.Update(_world, 0.f);
 

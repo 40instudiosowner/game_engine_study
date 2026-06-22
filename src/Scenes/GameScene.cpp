@@ -781,7 +781,9 @@ void GameScene::HandleEvent(const sf::Event& event)
 		}
 		if (keyPressed->scancode == sf::Keyboard::Scancode::F12)
 		{
+#ifdef EDITOR_ENABLED
 			_engine->ChangeScene("editor");
+#endif
 		}
 	}
 }

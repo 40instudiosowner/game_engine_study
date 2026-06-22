@@ -80,6 +80,7 @@ COMPONENT(PlayerComponent,
 
 // Sprite
 COMPONENT(SpriteComponent,
+    FIELD(textureName),
     FIELD(textureRect),
     FIELD(color),
     FIELD(visible),

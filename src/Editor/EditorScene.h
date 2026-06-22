@@ -35,6 +35,8 @@ private:
     void CancelPlacement();
     void SaveScene();
     void LoadScene();
+    void DoLoadScene();
+    void RestoreTexturePointers();
 
     std::unique_ptr<CameraService> _camera;
     std::unique_ptr<RenderService> _renderService;
@@ -46,6 +48,9 @@ private:
     int _pendingEntityId = -1;
     std::string _pendingType;
     std::unordered_map<int, std::string> _entityAssetNames;
+
+    sf::Clock _imguiDeltaClock;
+    bool _pendingReload = false;
 };
 
 }

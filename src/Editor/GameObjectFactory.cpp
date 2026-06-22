@@ -32,6 +32,7 @@ int GameObjectFactory::CreateGameObjectEntity(const sf::Texture& tex) const
 
     BoxColliderComponent collider;
     collider.size = sf::Vector2f(tex.getSize());
+    collider.offset = -sprite.origin;
     _world.AddComponent(entity, collider);
 
     _world.AddComponent(entity, CollisionComponent{});
@@ -55,6 +56,7 @@ int GameObjectFactory::CreateGameObjectEntity(const Animation& anim) const
 
     BoxColliderComponent collider;
     collider.size = sf::Vector2f(anim.frameWidth, anim.frameHeight);
+    collider.offset = -sprite.origin;
     _world.AddComponent(entity, collider);
 
     _world.AddComponent(entity, CollisionComponent{});

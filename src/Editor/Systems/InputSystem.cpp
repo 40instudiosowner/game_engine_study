@@ -2,12 +2,16 @@
 #include "../Constants.h"
 #include "../RenderState.h"
 #include <SFML/Window/Keyboard.hpp>
+#include <imgui.h>
 
 namespace Editor
 {
 
 void InputSystem::Update(World& world, float dt)
 {
+    if (ImGui::GetIO().WantCaptureKeyboard)
+        return;
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G))
         RenderState::IsGrid = !RenderState::IsGrid;
 

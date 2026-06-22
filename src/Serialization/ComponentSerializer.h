@@ -17,7 +17,7 @@ public:
     template<typename T>
     void Register()
     {
-        _hashToTypeIdxMap.emplace(GetComponentTypeId<T>(), std::type_index(typeid(T)));
+        _hashToTypeIdxMap.emplace(typeid(T).hash_code(), std::type_index(typeid(T)));
 
         _serializer[std::type_index(typeid(T))] = [this](int entity, SerializedComponent& out) -> bool
         {

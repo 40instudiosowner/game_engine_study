@@ -1,5 +1,6 @@
 #include "MouseInputSystem.h"
 #include <SFML/Window/Mouse.hpp>
+#include <imgui.h>
 
 namespace Editor
 {
@@ -21,6 +22,10 @@ MouseInputSystem::MouseInputSystem(std::shared_ptr<GameObjectController> goContr
 
 void MouseInputSystem::Update(World& world, float dt)
 {
+    // Don't process mouse input when ImGui is capturing it
+    if (ImGui::GetIO().WantCaptureMouse)
+        return;
+
     sf::Vector2i mousePos = sf::Mouse::getPosition(_window);
     sf::Vector2f worldPos = _camera.WindowToWorldPosition(mousePos);
 

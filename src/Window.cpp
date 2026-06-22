@@ -1,8 +1,8 @@
 #include "Window.h"
-<<<<<<< HEAD
-#include "ConfigReader.h"
-=======
 
+#include "ConfigReader.h"
+
+ 
 #include "Systems/BoundsSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -27,7 +27,6 @@
 #include "Components/PlayerComponent.h"
 
 
->>>>>>> SpaceInvaders
 #include <iostream>
 #include <imgui-SFML.h>
 
@@ -74,15 +73,14 @@ void Window::RegisterSystems()
 	// ECS SYSTEMS
 	_systems.AddSystem<MovementSystem>();
 
-<<<<<<< HEAD
     _visualObjects.front()->SetPosition({_config->getLogoPositionX(), _config->getLogoPositionY()});    // позиция из конфига
     Color logoColor = _config->getLogoColor();
     _visualObjects.front()->SetColor(logoColor.r, logoColor.g, logoColor.b);  // цсет из конфига 
 
     _visualObjects.front()->SetShouldDraw(true);    // при первом запуске рисовать
-=======
+
 	_systems.AddSystem<BoundsSystem>();
->>>>>>> SpaceInvaders
+
 
 	_systems.AddSystem<RenderSystem>(_window, _gameState);
 
